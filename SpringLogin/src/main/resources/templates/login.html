@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"></meta>
+</head>
+<body>
+    <!-- コンテンツ部分 -->
+    <div>
+        <!-- method="post"にすることでpostリクエストを発行することができます。th:actionでPostを処理するメソッドをURLで指定します。 -->
+        <form method="post" th:action="@{/login}">
+            <div>
+                <label>Username:</label>
+                <!-- 今回の実装では使いませんがname属性を指定してあります。後で認証の時に使います。 -->
+                <input type="text" name="username" />
+            </div>
+            <div>
+                <label>Password:</label>
+                <input type="password" name="password" />
+            </div>
+
+            <button type="submit">login</button>
+        </form>
+    </div>
+</body>
+</html>

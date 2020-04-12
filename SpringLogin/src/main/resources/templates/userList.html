@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- thymeleafを使うため以下を記述する。以後はth:xxxとすればthymeleafのメソッドが使用可能。 -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"></meta>
+</head>
+<body>
+    <!-- コンテンツ部分 -->
+    <div>
+        <h1>ユーザリスト</h1>
+        <table>
+            <tr>
+                <th>user_id</th>
+                <th>user_name</th>
+                <th>password</th>
+            </tr>
+            <!-- ControllerからuserListを受け取りth:each文で配列の要素を回します。 -->
+            <!-- 引数のuserにはUserクラスのインスタンスが格納されているので、フィールド名を指定すれば値を引き出せます。 -->
+            <tr th:each="user : ${userList}">
+                <td th:text="${user.userId}"></td>
+                <td th:text="${user.userName}"></td>
+                <td th:text="${user.password}"></td>
+            </tr>
+
+        </table>
+    </div>
+</body>
+</html>
