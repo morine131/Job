@@ -1,0 +1,49 @@
+@charset "UTF-8";
+.inline-block{
+	display:inline-block;
+}
+.container{
+	text-align:center;
+}
+.user-name{
+	font-size:20px;
+}
+.logout-btn{
+	display:inline-block;
+	padding-left:50px;
+}
+.home-btn{
+	display:inline-block;
+	padding-right:20px;
+}
+.yajirushi-btn{
+	height:40px;
+	width:40px;
+	display:inline-block;
+	font-size: 30px;
+
+}
+.date{
+	font-size:28px;
+}
+.feel-table{
+	width:1000px;
+}
+.feel-table-name{
+	width:150px;
+}
+.feel-table-gatunichisquares{
+	width:70px;
+}
+.feel-table-daysquares{
+	width:27px;
+}
+.background-green{
+	background-color:#7fff7f;
+}
+.background-yellow{
+	background-color:#ffff7f;
+}
+.background-red{
+	background-color:#ff7f7f;
+}
