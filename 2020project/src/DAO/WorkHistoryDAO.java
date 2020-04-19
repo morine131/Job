@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import DTO.WorkHistoryBeans;
+import myClass.ProcessedTime;
 
 public class WorkHistoryDAO extends DAO {
 
@@ -57,6 +58,101 @@ public class WorkHistoryDAO extends DAO {
 			super.rollback();
 			throw e;
 		}
+
+		String sql2 = "SELECT * FROM work_history WHERE emp_id = ? AND `date` = ?";
+
+		// SQLを実行してその結果を取得し、実行SQLを渡す
+		try {
+			// プリペアステーメントを取得し、実行SQLを渡す
+			PreparedStatement statement = getPreparedStatement(sql2);
+			statement.setString(1, emp_id);
+			statement.setDate(2, date);
+
+			// SQLを実行してその結果を取得する
+			ResultSet rs2 = statement.executeQuery();
+
+			String start_time = "";
+			String finish_time = "";
+
+			while (rs2.next()) {
+				start_time = rs2.getString("start_time");
+				finish_time = rs2.getString("finish_time");
+			}
+			ProcessedTime pt_start = new ProcessedTime(start_time,"start");
+			ProcessedTime pt_finish = new ProcessedTime(finish_time);
+
+			automaticCalculation(pt_start,pt_finish,emp_id,date); //休憩時間　基本時間　残業時間　深夜残業時間　作業時間　の自動計算
+
+
+			// コミットを行う
+			super.commit();
+		}catch (Exception e) {
+			super.rollback();
+			throw e;
+		}
+	}
+
+	private void automaticCalculation(ProcessedTime pt_start, ProcessedTime pt_finish,String emp_id,Date date) throws Exception  {
+		System.out.println("start_timeのインデックスは"+pt_start.getIndex());
+		System.out.println("finish_timeのインデックスは"+pt_finish.getIndex());
+
+		int startTime = pt_start.getIndex();
+		int finishTime = pt_finish.getIndex();
+
+		//休憩時間を求める
+		int breakTime = 0;
+
+		//12:30に出勤打刻したとき or 12:30に退勤打刻したとき休憩時間は30分
+		if(startTime == 25 || finishTime == 25) {
+			breakTime ++;
+		}
+
+		//出勤時刻と退勤時刻が12:00~13:00の1時間をまたいだとき、休憩時間に1時間プラス
+		if(startTime <= 24 && finishTime >= 26) {
+			breakTime += 2;
+		}
+
+		//退勤時刻が18:00を超えた時
+		if(finishTime >= 36) {
+			breakTime++;
+		}
+		//退勤時刻が22:30を超えた時
+		if(finishTime >= 45) {
+			breakTime++;
+		}
+
+		//休憩時間を元に作業時間を求める
+		int workTime = 0;
+
+		workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime;
+
+		//Time型に変換
+		ProcessedTime pBreakTime = new ProcessedTime();
+		pBreakTime.setIndex(breakTime);
+
+		ProcessedTime pWorkTime = new ProcessedTime();
+		pWorkTime.setIndex(workTime);
+
+		String sql = "UPDATE work_history SET break_time = ?  , work_time = ? WHERE (emp_id = ?) and (date = ?);";
+
+		// SQLを実行してその結果を取得し、実行SQLを渡す
+		try {
+			// プリペアステーメントを取得し、実行SQLを渡す
+			PreparedStatement statement = getPreparedStatement(sql);
+			statement.setTime(1,pBreakTime.convertSqlTime());
+			statement.setTime(2,pWorkTime.convertSqlTime());
+			statement.setString(3,emp_id);
+			statement.setDate(4, date);
+
+			statement.executeUpdate();
+
+			// コミットを行う
+			super.commit();
+		}catch (Exception e) {
+			super.rollback();
+			throw e;
+		}
+
 	}
 
 	//出勤打刻がされているか判定するメソッド
@@ -168,5 +264,4 @@ public class WorkHistoryDAO extends DAO {
 		}
 		return a;
 	}
-
 }

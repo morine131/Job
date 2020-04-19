@@ -6,6 +6,10 @@ public class ProcessedTime {
 
 	private int index;
 
+	public ProcessedTime() {
+
+	}
+
 	public ProcessedTime(String HHMMSS){
 		String HH = "";
 		String MM = "";

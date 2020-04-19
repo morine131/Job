@@ -10,7 +10,7 @@
 <title>開発テスト画面</title>
 </head>
 <body>
-<div id="app">
+<div id="app" class="container">
 			<span class="user-name">社員名： ${ user_name}
 				さん
 			</span>
@@ -52,18 +52,27 @@
  		</form>
  				<form class="finish-btn" method="post"
 				action="${pageContext.request.contextPath}/Test">
+				<input type="hidden" :value="year" name="year">
+				<input type="hidden" :value="month" name="month">
+				<input type="hidden" :value="day" name="day">
+				<input type="hidden" :value="hour" name="hour">
+				<input type="hidden" :value="minute" name="minute">
 		<input type="hidden" value="1" name="feeling"> <input
 			class="btn btn-warning" type="submit" value="普通"><br>
 			</form>
 					<form class="finish-btn" method="post"
 				action="${pageContext.request.contextPath}/Test">
-		<input type="hidden" value="2" name="feeling"> <input
+				<input type="hidden" :value="year" name="year">
+				<input type="hidden" :value="month" name="month">
+				<input type="hidden" :value="day" name="day">
+				<input type="hidden" :value="hour" name="hour">
+				<input type="hidden" :value="minute" name="minute">
+				<input type="hidden" value="2" name="feeling"> <input
 			class="btn btn-danger" type="submit" value="イマイチ">
 		</form>
 
 	<br>
 	<br>
-	{{year}},{{month}},{{day}},{{hour}},{{minute}}
 	</div>
 	<script>
 		new Vue({
