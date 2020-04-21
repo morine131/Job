@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import DAO.WorkHistoryDAO;
+import myClass.ProcessedTime;
 
 /**
  * Servlet implementation class FinishServlet
@@ -22,13 +23,13 @@ import DAO.WorkHistoryDAO;
 public class FinishServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public FinishServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public FinishServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -47,15 +48,9 @@ public class FinishServlet extends HttpServlet {
 		String feeling = request.getParameter("feeling");
 
 		HttpSession session = request.getSession();
-		 String emp_id = (String) session.getAttribute("emp_id");
-		 Date date = new Date(System.currentTimeMillis()); //現在の日付 0:00を過ぎている時には前日分にする処理が必要
-		 Time time = new Time(System.currentTimeMillis());
-
-		try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workFinish(emp_id,date,time,feeling);
-			} catch (Exception e) {
-				throw new ServletException(e);
-			}
+		String emp_id = (String) session.getAttribute("emp_id");
+		Date date = new Date(System.currentTimeMillis());
+		Time time = new Time(System.currentTimeMillis());
 
 		//打刻完了画面に渡すdateを整形
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy/MM/dd");
@@ -68,6 +63,21 @@ public class FinishServlet extends HttpServlet {
 		//打刻完了画面に渡す文字列を指定
 		request.setAttribute("punchMessage", "退勤");
 
+		//帰社時刻が0:00〜8:00の間、前日分の帰社打刻とするにする処理
+		ProcessedTime pTime = new ProcessedTime(time.toString());
+		if(pTime.getIndex() <= 16) {
+			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
+				wd.workOverFinish(emp_id,date,time,feeling);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+		}else {//23:30までに退勤打刻した時
+			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
+				wd.workFinish(emp_id,date,time,feeling);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+		}
 		//検索一覧画面へ
 		RequestDispatcher rd = request.getRequestDispatcher("/successPunch.jsp");
 		rd.forward(request, response);

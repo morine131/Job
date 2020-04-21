@@ -78,6 +78,7 @@ public class WorkHistoryDAO extends DAO {
 				start_time = rs2.getString("start_time");
 				finish_time = rs2.getString("finish_time");
 			}
+			System.out.println(start_time);
 			ProcessedTime pt_start = new ProcessedTime(start_time,"start");
 			ProcessedTime pt_finish = new ProcessedTime(finish_time);
 
@@ -116,15 +117,39 @@ public class WorkHistoryDAO extends DAO {
 		if(finishTime >= 36) {
 			breakTime++;
 		}
-		//退勤時刻が22:30を超えた時
-		if(finishTime >= 45) {
-			breakTime++;
-		}
 
 		//休憩時間を元に作業時間を求める
 		int workTime = 0;
 
 		workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime;
+
+		//作業時間を元に基本時間を求める
+		int standardTime = 0;
+
+		if(workTime >= 15) {
+			standardTime = 15;
+		}else {
+			standardTime = workTime;
+		}
+
+		//通常残業時間と深夜残業時間を求める
+		int baseOverTime = 0;
+		if(startTime <= 17) {
+			baseOverTime += 18-startTime;
+		}
+		if(finishTime >=37) {
+			baseOverTime += finishTime -36;
+		}
+
+		int lateOverTime = 0;
+		if(startTime <= 10) {
+			lateOverTime += 10 - startTime;
+		}
+		if(finishTime >= 44) {
+			lateOverTime += finishTime - 44;
+		}
+
+		int normalOverTime = baseOverTime - lateOverTime;
 
 		//Time型に変換
 		ProcessedTime pBreakTime = new ProcessedTime();
@@ -133,7 +158,16 @@ public class WorkHistoryDAO extends DAO {
 		ProcessedTime pWorkTime = new ProcessedTime();
 		pWorkTime.setIndex(workTime);
 
-		String sql = "UPDATE work_history SET break_time = ?  , work_time = ? WHERE (emp_id = ?) and (date = ?);";
+		ProcessedTime pStandardTime = new ProcessedTime();
+		pStandardTime.setIndex(standardTime);
+
+		ProcessedTime pNormalOverTime = new ProcessedTime();
+		pNormalOverTime.setIndex(normalOverTime);
+
+		ProcessedTime pLateOverTime = new ProcessedTime();
+		pLateOverTime.setIndex(lateOverTime);
+
+		String sql = "UPDATE work_history SET break_time = ?  , work_time = ?  ,standard_time = ? ,over_time = ? ,late_over_time = ? WHERE (emp_id = ?) and (date = ?);";
 
 		// SQLを実行してその結果を取得し、実行SQLを渡す
 		try {
@@ -141,8 +175,174 @@ public class WorkHistoryDAO extends DAO {
 			PreparedStatement statement = getPreparedStatement(sql);
 			statement.setTime(1,pBreakTime.convertSqlTime());
 			statement.setTime(2,pWorkTime.convertSqlTime());
-			statement.setString(3,emp_id);
-			statement.setDate(4, date);
+			statement.setTime(3,pStandardTime.convertSqlTime());
+			statement.setTime(4,pNormalOverTime.convertSqlTime());
+			statement.setTime(5,pLateOverTime.convertSqlTime());
+			statement.setString(6,emp_id);
+			statement.setDate(7, date);
+
+			statement.executeUpdate();
+
+			// コミットを行う
+			super.commit();
+		}catch (Exception e) {
+			super.rollback();
+			throw e;
+		}
+
+	}
+
+	//退勤打刻用メソッド 退勤打刻が0:00をすぎた時用
+	public void workOverFinish(String emp_id,Date date,Time time,String feeling) throws Exception{
+		String sql = "UPDATE work_history SET finish_time = ?, feeling = ? WHERE (emp_id = ?) and (date = ?);";
+
+		 Calendar cal = new Calendar.Builder().setInstant(date).build();
+		 cal.add(Calendar.DAY_OF_MONTH, 0);
+		 Date startDate = new Date(0);
+		 startDate.setTime(cal.getTimeInMillis());
+
+		// SQLを実行してその結果を取得し、実行SQLを渡す
+		try {
+			System.out.println("startDate: "+startDate);
+			// プリペアステーメントを取得し、実行SQLを渡す
+			PreparedStatement statement = getPreparedStatement(sql);
+			statement.setTime(1, time);
+			statement.setString(2,feeling);
+			statement.setString(3, emp_id);
+			statement.setDate(4, startDate);
+
+			statement.executeUpdate();
+
+			// コミットを行う
+			super.commit();
+		}catch (Exception e) {
+			super.rollback();
+			throw e;
+		}
+
+		String sql2 = "SELECT * FROM work_history WHERE emp_id = ? AND `date` = ?";
+
+		// SQLを実行してその結果を取得し、実行SQLを渡す
+		try {
+			// プリペアステーメントを取得し、実行SQLを渡す
+			PreparedStatement statement = getPreparedStatement(sql2);
+			statement.setString(1, emp_id);
+			statement.setDate(2, date);
+
+			// SQLを実行してその結果を取得する
+			ResultSet rs2 = statement.executeQuery();
+
+			String start_time = "";
+			String finish_time = "";
+
+			while (rs2.next()) {
+				start_time = rs2.getString("start_time");
+				finish_time = rs2.getString("finish_time");
+			}
+			System.out.println(start_time);
+			System.out.println(finish_time);
+			ProcessedTime pt_start = new ProcessedTime(start_time,"start");
+			ProcessedTime pt_finish = new ProcessedTime(finish_time);
+
+			automaticOverCalculation(pt_start,pt_finish,emp_id,date); //休憩時間　基本時間　残業時間　深夜残業時間　作業時間　の自動計算
+
+
+			// コミットを行う
+			super.commit();
+		}catch (Exception e) {
+			super.rollback();
+			throw e;
+		}
+	}
+
+	//自動計算　退勤打刻が0:00をすぎた時用
+	private void automaticOverCalculation(ProcessedTime pt_start, ProcessedTime pt_finish,String emp_id,Date date) throws Exception  {
+		System.out.println("start_timeのインデックスは"+pt_start.getIndex());
+		System.out.println("finish_timeのインデックスは"+pt_finish.getIndex());
+
+		int startTime = pt_start.getIndex();
+		int finishTime = pt_finish.getIndex();
+
+		//休憩時間を求める
+		int breakTime = 0;
+
+		//12:30に出勤打刻したとき or 12:30に退勤打刻したとき休憩時間は30分
+		if(startTime == 25 ) {
+			breakTime ++;
+		}
+
+		//出勤時刻と退勤時刻が12:00~13:00の1時間をまたいだとき、休憩時間に1時間プラス
+		if(startTime <= 24 ) {
+			breakTime += 2;
+		}
+
+		//退勤時刻が18:00を超えた時
+		if(startTime <= 35) {
+			breakTime++;
+		}
+
+		//休憩時間を元に作業時間を求める
+		int workTime = 0;
+
+		workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime;
+
+		//作業時間を元に基本時間を求める
+		int standardTime = 0;
+
+		if(workTime >= 15) {
+			standardTime = 15;
+		}else {
+			standardTime = workTime;
+		}
+
+		//通常残業時間と深夜残業時間を求める
+		int baseOverTime = 0;
+		if(startTime <= 17) {
+			baseOverTime += 18-startTime;
+		}
+
+		baseOverTime += finishTime -36 +48;
+
+
+		int lateOverTime = 0;
+		if(startTime <= 10) {
+			lateOverTime += 10 - startTime;
+		}
+
+		lateOverTime += finishTime - 44 + 48;
+
+
+		int normalOverTime = baseOverTime - lateOverTime;
+
+		//Time型に変換
+		ProcessedTime pBreakTime = new ProcessedTime();
+		pBreakTime.setIndex(breakTime);
+
+		ProcessedTime pWorkTime = new ProcessedTime();
+		pWorkTime.setIndex(workTime);
+
+		ProcessedTime pStandardTime = new ProcessedTime();
+		pStandardTime.setIndex(standardTime);
+
+		ProcessedTime pNormalOverTime = new ProcessedTime();
+		pNormalOverTime.setIndex(normalOverTime);
+
+		ProcessedTime pLateOverTime = new ProcessedTime();
+		pLateOverTime.setIndex(lateOverTime);
+
+		String sql = "UPDATE work_history SET break_time = ?  , work_time = ?  ,standard_time = ? ,over_time = ? ,late_over_time = ? WHERE (emp_id = ?) and (date = ?);";
+
+		// SQLを実行してその結果を取得し、実行SQLを渡す
+		try {
+			// プリペアステーメントを取得し、実行SQLを渡す
+			PreparedStatement statement = getPreparedStatement(sql);
+			statement.setTime(1,pBreakTime.convertSqlTime());
+			statement.setTime(2,pWorkTime.convertSqlTime());
+			statement.setTime(3,pStandardTime.convertSqlTime());
+			statement.setTime(4,pNormalOverTime.convertSqlTime());
+			statement.setTime(5,pLateOverTime.convertSqlTime());
+			statement.setString(6,emp_id);
+			statement.setDate(7, date);
 
 			statement.executeUpdate();
 
