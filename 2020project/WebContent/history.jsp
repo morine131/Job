@@ -23,41 +23,77 @@
 			<input class="btn btn-secondary" type="submit" value="ログアウト">
 		</form>
 
-		<table class="feel-table table-bordered">
-	<tbody>
-		<tr>
-			<th>休日</th>
-			<th>日付</th>
-			<th>曜日</th>
-			<th>出社時刻</th>
-			<th>退社時刻</th>
-			<th>休憩時間</th>
-			<th>基本時間</th>
-			<th>通常残業時間</th>
-			<th>深夜残業時間</th>
-			<th>作業時間</th>
-			<th>備考</th>
-			<th>修正</th>
-		</tr>
-		<c:forEach items="${list}" var="map" varStatus="parentStatus">
-		<tr>
-			<td>${ map.holiday }</td>
-			<td>${ map.date}</td>
-			<td>${map.day}</td>
-			<td>${ map.start_time}</td>
-			<td>${map.finish_time}</td>
-			<td>${map.break_time}</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		</c:forEach>
+		<table class="feel-table table-bordered table-hover">
+			<tbody>
+				<tr>
+					<th>休日</th>
+					<th>日付</th>
+					<th>曜日</th>
+					<th>出社時刻</th>
+					<th>退社時刻</th>
+					<th>休憩時間</th>
+					<th>基本時間</th>
+					<th>通常残業時間</th>
+					<th>深夜残業時間</th>
+					<th>作業時間</th>
+					<th>備考</th>
+					<th>修正</th>
+				</tr>
+				<c:forEach items="${list}" var="map" varStatus="parentStatus">
+					<tr>
+						<td <c:if test="${map.holiday == '1'}">
+								class="background-red"
+							</c:if>></td>
+						<td>${parentStatus.count }</td>
+						<td>${map.day}</td>
+						<td>${ map.start_time}</td>
+						<td>${map.finish_time}</td>
+						<td>${map.break_time}</td>
+						<td>${map.standard_time }</td>
+						<td>${map.over_time }</td>
+						<td>${map.late_over_time }</td>
+						<td>${map.work_time }</td>
+						<td>${map.note }</td>
+						<td><input type="button" value="btn">
+				</c:forEach>
 
-	</tbody>
-</table>
+			</tbody>
+		</table>
+		<br>
+
+		平日合計
+		<table class="feel-table table-bordered table-hover">
+			<tbody>
+				<tr>
+					<th>作業時間</th>
+					<th>基本時間</th>
+					<th>通常残業時間</th>
+					<th>深夜残業時間</th>
+				</tr>
+				<tr>
+					<td>${week_work_time }</td>
+					<td>${week_standard_time }</td>
+					<td>${week_over_time }</td>
+					<td>${week_late_over_time }</td>
+				</tr>
+			</tbody>
+		</table>
+		<br>
+		休日合計
+		<table class="feel-table table-bordered table-hover">
+			<tbody>
+				<tr>
+					<th>作業時間</th>
+					<th>通常残業時間</th>
+					<th>深夜残業時間</th>
+				</tr>
+				<tr>
+					<td>${holi_work_time }</td>
+					<td>${holi_over_time }</td>
+					<td>${holi_late_over_time }</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </body>
 </html>

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import DAO.WorkHistoryDAO;
 import DTO.OutputHistoryBeans;
 import DTO.WorkHistoryBeans;
+import myClass.ProcessedTime;
 
 /**
  * Servlet implementation class HistoryServlet
@@ -39,9 +40,35 @@ public class HistoryServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String emp_id = (String)session.getAttribute("emp_id");
 
+		int int_weekdays_work_time = 0;
+		int int_weekdays_standard_time = 0;
+		int int_weekdays_over_time = 0;
+		int int_weekdays_late_over_time = 0;
+
+		int int_holidays_work_time = 0;
+		int int_holidays_over_time = 0;
+		int int_holidays_late_over_time = 0;
+
+		ProcessedTime p_weekdays_work_time = new ProcessedTime();
+		ProcessedTime p_weekdays_standard_time = new ProcessedTime();
+		ProcessedTime p_weekdays_over_time = new ProcessedTime();
+		ProcessedTime p_weekdays_late_over_time = new ProcessedTime();
+
+		ProcessedTime p_holidays_work_time = new ProcessedTime();
+		ProcessedTime p_holidays_over_time = new ProcessedTime();
+		ProcessedTime p_holidays_late_over_time = new ProcessedTime();
+
+		String weekdays_work_time = "";
+		String weekdays_standard_time = "";
+		String weekdays_over_time = "";
+		String weekdays_late_over_time = "";
+
+		String holidays_work_time = "";
+		String holidays_over_time = "";
+		String holidays_late_over_time = "";
+
 		Calendar calendar = Calendar.getInstance();
 		int targetYear = calendar.get(Calendar.YEAR);
-
 		int targetMonth = calendar.get(Calendar.MONTH) + 1;
 		System.out.println("targetMonth: "+ targetMonth);
 
@@ -55,25 +82,81 @@ public class HistoryServlet extends HttpServlet {
 		}
 		ArrayList<OutputHistoryBeans>resultList = new ArrayList<OutputHistoryBeans>();
 
+		int i= 0;
 		for (WorkHistoryBeans wb : list) {
 			OutputHistoryBeans ob = new OutputHistoryBeans();
-			if(wb.getDate()!= null) {
+			if(wb.getFinish_time()!= null) {
 				ob.setDate(wb.getDate().toString());
 				ob.setDay(wb.getDate().toString());
 				ob.setStart_time(wb.getStart_time());
 				ob.setFinish_time(wb.getFinish_time());
 				ob.setFeeling(wb.getFeeling());
 				ob.setHoliday(wb.getHoliday());
-				ob.setBreak_time(ob.getBreak_time());
+				ob.setBreak_time(wb.getBreak_time());
 				ob.setStandard_time(wb.getStandard_time());
 				ob.setOver_time(wb.getOver_time());
 				ob.setLate_over_time(wb.getLate_over_time());
 				ob.setWork_time(wb.getWork_time());
 				ob.setNote(wb.getNote());
 				ob.setReason(wb.getReason());
+				if(wb.getHoliday().equals("0")) {
+					ProcessedTime p_weekday_work_time = new ProcessedTime(wb.getWork_time().toString());
+					ProcessedTime p_weekday_standard_time = new ProcessedTime(wb.getStandard_time().toString());
+					ProcessedTime p_weekday_over_time = new ProcessedTime(wb.getOver_time().toString());
+					ProcessedTime p_weekday_late_over_time = new ProcessedTime(wb.getLate_over_time().toString());
+					int_weekdays_work_time += p_weekday_work_time.getIndex();
+					int_weekdays_standard_time += p_weekday_standard_time.getIndex();
+					int_weekdays_over_time += p_weekday_over_time.getIndex();
+					int_weekdays_late_over_time += p_weekday_late_over_time.getIndex();
+				}else {
+					ProcessedTime p_holiday_work_time = new ProcessedTime(wb.getWork_time().toString());
+					ProcessedTime p_holiday_over_time = new ProcessedTime(wb.getOver_time().toString());
+					ProcessedTime p_holiday_late_over_time = new ProcessedTime(wb.getLate_over_time().toString());
+					int_holidays_work_time += p_holiday_work_time.getIndex();
+					int_holidays_over_time += p_holiday_over_time.getIndex();
+					int_holidays_late_over_time += p_holiday_late_over_time.getIndex();
+				}
+			}else if(wb.getStart_time() != null){
+				ob.setDate(i+1);
+				ob.setDay(targetYear, targetMonth,i+1);
+				ob.setHoliday(targetYear,targetMonth,i+1);
+				ob.setStart_time(wb.getStart_time());
+			}else {
+				ob.setDate(i+1);
+				ob.setDay(targetYear, targetMonth,i+1);
+				ob.setHoliday(targetYear,targetMonth,i+1);
 			}
 			resultList.add(ob);
+			i++;
 		}
+
+		p_weekdays_work_time.setIndex(int_weekdays_work_time);
+		p_weekdays_standard_time.setIndex(int_weekdays_standard_time);
+		p_weekdays_over_time.setIndex(int_weekdays_over_time);
+		p_weekdays_late_over_time.setIndex(int_weekdays_late_over_time);
+
+		p_holidays_work_time.setIndex(int_holidays_work_time);
+		p_holidays_over_time.setIndex(int_holidays_over_time);
+		p_holidays_late_over_time.setIndex(int_holidays_late_over_time);
+
+		weekdays_work_time = p_weekdays_work_time.convertHHHTime();
+		weekdays_standard_time = p_weekdays_standard_time.convertHHHTime();
+		weekdays_over_time = p_weekdays_over_time.convertHHHTime();
+		weekdays_late_over_time = p_weekdays_late_over_time.convertHHHTime();
+
+		holidays_work_time = p_holidays_work_time.convertHHHTime();
+		holidays_over_time = p_holidays_over_time.convertHHHTime();
+		holidays_late_over_time = p_holidays_late_over_time.convertHHHTime();
+
+		request.setAttribute("week_work_time", weekdays_work_time);
+		request.setAttribute("week_standard_time", weekdays_standard_time);
+		request.setAttribute("week_over_time", weekdays_over_time);
+		request.setAttribute("week_late_over_time", weekdays_late_over_time);
+
+		request.setAttribute("holi_work_time", holidays_work_time);
+		request.setAttribute("holi_over_time", holidays_over_time);
+		request.setAttribute("holi_late_over_time", holidays_late_over_time);
+
 		request.setAttribute("list", resultList);
 
 		RequestDispatcher rd = request.getRequestDispatcher("/history.jsp");

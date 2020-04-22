@@ -11,11 +11,11 @@ public class OutputHistoryBeans {
 	private Time finish_time;
 	private String feeling;
 	private String holiday;
-	private Time break_time;
-	private Time standard_time; //DB作成時のスペルミス
-	private Time over_time;
-	private Time late_over_time;
-	private Time work_time;
+	private String break_time;
+	private String standard_time; //DB作成時のスペルミス
+	private String over_time;
+	private String late_over_time;
+	private String work_time;
 	private String note;
 	private String reason;
 
@@ -24,7 +24,9 @@ public class OutputHistoryBeans {
 	}
 	public void setDate(String yyyymmdd) {
 		int aDay = Integer.parseInt(yyyymmdd.substring(8, 10));
-		System.out.println("aDay: " + aDay);
+		this.date = aDay;
+	}
+	public void setDate(int aDay) {
 		this.date = aDay;
 	}
 	public String getDay() {
@@ -34,6 +36,11 @@ public class OutputHistoryBeans {
 		int year = Integer.parseInt(yyyymmdd.substring(0, 4));
 		int month = Integer.parseInt(yyyymmdd.substring(5, 7));
 		int aDay = Integer.parseInt(yyyymmdd.substring(8, 10));
+		Calendar cal = new Calendar.Builder().setDate(year,month-1,aDay).build();
+		String day = getDayOfTheWeek(cal);
+		this.day = day;
+	}
+	public void setDay(int year,int month, int aDay) {
 		Calendar cal = new Calendar.Builder().setDate(year,month-1,aDay).build();
 		String day = getDayOfTheWeek(cal);
 		this.day = day;
@@ -62,35 +69,40 @@ public class OutputHistoryBeans {
 	public void setHoliday(String holiday) {
 		this.holiday = holiday;
 	}
-	public Time getBreak_time() {
+	public void setHoliday(int targetYear,int targetMonth,int targetDay) {
+		Calendar cal = new Calendar.Builder().setDate(targetYear, targetMonth-1 , targetDay).build();
+		this.holiday = getDayOfTheWeek2(cal);
+	}
+
+	public String getBreak_time() {
 		return break_time;
 	}
 	public void setBreak_time(Time break_time) {
-		this.break_time = break_time;
+		this.break_time = toOutputStr(break_time);
 	}
-	public Time getStandard_time() {
+	public String getStandard_time() {
 		return standard_time;
 	}
 	public void setStandard_time(Time standard_time) {
-		this.standard_time = standard_time;
+		this.standard_time = toOutputStr(standard_time);
 	}
-	public Time getOver_time() {
+	public String getOver_time() {
 		return over_time;
 	}
 	public void setOver_time(Time over_time) {
-		this.over_time = over_time;
+		this.over_time = toOutputStr(over_time);
 	}
-	public Time getLate_over_time() {
+	public String getLate_over_time() {
 		return late_over_time;
 	}
 	public void setLate_over_time(Time late_over_time) {
-		this.late_over_time = late_over_time;
+		this.late_over_time = toOutputStr(late_over_time);
 	}
-	public Time getWork_time() {
+	public String getWork_time() {
 		return work_time;
 	}
 	public void setWork_time(Time work_time) {
-		this.work_time = work_time;
+		this.work_time = toOutputStr(work_time);
 	}
 	public String getNote() {
 		return note;
@@ -118,6 +130,23 @@ public class OutputHistoryBeans {
 		case Calendar.SATURDAY: return "土";
 		}
 		throw new IllegalStateException();
+	}
+	public static String getDayOfTheWeek2(Calendar cal) {
+
+		switch (cal.get(Calendar.DAY_OF_WEEK)) {
+		case Calendar.SUNDAY: return "1";
+		case Calendar.MONDAY: return "0";
+		case Calendar.TUESDAY: return "0";
+		case Calendar.WEDNESDAY: return "0";
+		case Calendar.THURSDAY: return "0";
+		case Calendar.FRIDAY: return "0";
+		case Calendar.SATURDAY: return "1";
+		}
+		throw new IllegalStateException();
+	}
+	private String toOutputStr(Time time) {
+		String result = time.toString().substring(0, 5);
+		return result;
 	}
 }
 

@@ -43,8 +43,9 @@
 			<form class="update-pass-btn" method="GET" action="${pageContext.request.contextPath}/UpdatePassword">
 				<input class="btn " type="submit" value="パスワード設定">
 			</form>
+			<br>
 			<!--  開発用のテストページ-->
-			開発用テスト
+			開発用
 			<form class="update-pass-btn" method="GET" action="${pageContext.request.contextPath}/Test">
 				<input class="btn " type="submit" value="打刻テスト">
 			</form>

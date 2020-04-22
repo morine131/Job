@@ -106,6 +106,24 @@ public class ProcessedTime {
 
 		return time;
 	}
+	public String convertHHHTime() {
+		int ptIndex = this.getIndex();
+
+		int hour = 0;
+		String minute = "";
+
+		hour += ptIndex/2;
+
+		if(ptIndex % 2 !=0) {
+			minute = "30";
+		}else {
+			minute = "00";
+		}
+
+		String time = hour+":"+minute;
+
+		return time;
+	}
 
 	public int getIndex() {
 		return index;

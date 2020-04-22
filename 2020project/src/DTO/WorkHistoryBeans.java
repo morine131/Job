@@ -17,7 +17,8 @@ public class WorkHistoryBeans {
 	private Time work_time;
 	private String note;
 	private String reason;
-	
+
+
 	public String getEmp_id() {
 		return emp_id;
 	}
@@ -96,5 +97,5 @@ public class WorkHistoryBeans {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	
+
 }
