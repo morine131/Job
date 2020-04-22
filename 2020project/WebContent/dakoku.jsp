@@ -37,6 +37,9 @@
 				<input type="hidden" value="2" name="feeling">
 				<input class="btn btn-danger" type="submit" value="アイコン">
 			</form>
+			<form class="history_btn" method="GET" action="${pageContext.request.contextPath}/History">
+				<input class="btn " type="submit" value="勤務表">
+			</form>
 			<form class="update-pass-btn" method="GET" action="${pageContext.request.contextPath}/UpdatePassword">
 				<input class="btn " type="submit" value="パスワード設定">
 			</form>

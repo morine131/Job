@@ -1,7 +1,3 @@
-/* ログイン処理  作成者：市橋 1/6
- *
- */
-
 package Servlet;
 
 import java.io.IOException;
@@ -42,23 +38,8 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-//		//遷移元URLを取得
-//		String referer = request.getHeader("REFERER");
-//
-//		//遷移元URLからファイル名以降を取得
-//		int position = referer.lastIndexOf("/");
-//		if ( position >= 0 ) {
-//			referer = referer.substring( position + 1 );
-//		}
-//
-//		//★テスト用コメント出力 ２行
-//		System.out.println(request.getHeader("referer"));	//★テスト用コメント出力
-//		System.out.println(referer);						//★テスト用コメント出力
-//
-//
 		HttpSession session = request.getSession();
 		String logincheck = (String)session.getAttribute("emp_id");
-		System.out.println("ログインチェックの値は"+logincheck);
 
 		if(logincheck == null) {
 		// ログイン画面にフォワードする
@@ -71,16 +52,6 @@ public class LoginServlet extends HttpServlet {
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 *
-	 * ログイン処理を実行する
-	 *   ログインフォームに入力された userid, password でDB検索し、
-	 *   ユーザが登録されていた場合は、ユーザ情報をセッションスコープに格納する
-	 *
-	 * @return UserInfoBeans<loginUser>  userid, nickname, roleid
-	 *
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		// リクエストパラメータ受け取り時の文字フォーマット指定
@@ -107,6 +78,7 @@ public class LoginServlet extends HttpServlet {
 				session.setAttribute("user_name", loginUser.getUser_name());
 				session.setAttribute("emp_id", loginUser.getEmp_id());
 				session.setAttribute("admin_flg",loginUser.getAdmin_flg());
+				session.setAttribute("user_type",loginUser.getUser_type());
 
 
 				// フォワードパスを指定

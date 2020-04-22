@@ -49,6 +49,7 @@ public class FinishServlet extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		String emp_id = (String) session.getAttribute("emp_id");
+		String user_type = (String)session.getAttribute("user_type");
 		Date date = new Date(System.currentTimeMillis());
 		Time time = new Time(System.currentTimeMillis());
 
@@ -73,7 +74,7 @@ public class FinishServlet extends HttpServlet {
 			}
 		}else {//23:30までに退勤打刻した時
 			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workFinish(emp_id,date,time,feeling);
+				wd.workFinish(emp_id,date,time,feeling,user_type);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}

@@ -42,8 +42,7 @@ public class FeelListServlet extends HttpServlet {
 		int target_year = 0;
 		if(request.getParameter("target_year") == null) {
 		    Calendar calendar = Calendar.getInstance();
-		    target_year = calendar.get(Calendar.YEAR);
-			System.out.println("target_yearがないので現在年のリストを表示させます");
+		    target_year = calendar.get(Calendar.YEAR) ;
 		}else {
 			target_year = Integer.parseInt(request.getParameter("target_year"));
 		}
@@ -79,13 +78,6 @@ public class FeelListServlet extends HttpServlet {
 			userWorkInfoMap.put("feelYearList", feelYearList);
 			list.add(i, userWorkInfoMap);
 		}
-
-		System.out.println("デバッグ用出力");
-
-			ArrayList<ArrayList<String>> testList =  (ArrayList<ArrayList<String>>)list.get(0).get("feelYearList");
-			String result = testList.get(2).get(5);
-			System.out.println(list.get(0).get("user_name") + "の2020/3/6の気分は"+result);
-
 
 		request.setAttribute("list", list);
 

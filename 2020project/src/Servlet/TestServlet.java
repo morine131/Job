@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import DAO.WorkHistoryDAO;
-import myClass.ProcessedTime;
 
 /**
  * Servlet implementation class TestServlet
@@ -49,6 +48,7 @@ public class TestServlet extends HttpServlet {
 		//doGet(request, response);
 		HttpSession session = request.getSession();
 		String emp_id = (String) session.getAttribute("emp_id");
+		String user_type = (String)session.getAttribute("user_type");
 
 		String feeling = request.getParameter("feeling");
 
@@ -81,9 +81,6 @@ public class TestServlet extends HttpServlet {
 
 		String holiday = getDayOfTheWeek(year,month,day); //休日か平日かの取得
 
-
-		ProcessedTime pTime = new ProcessedTime(time.toString());
-		Calendar cal = new Calendar.Builder().setInstant(date).build();
 		//SQLの実行
 		//出勤打刻時
 		if(feeling == null) {
@@ -93,22 +90,11 @@ public class TestServlet extends HttpServlet {
 				throw new ServletException(e);
 			}
 		}else {
-			if(pTime.getIndex() <= 16) {
-				cal.add(Calendar.DAY_OF_MONTH, -1);
-				System.out.println("test: "+cal.getTime().toString());
-				date.setTime(cal.getTimeInMillis());
 				try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-					wd.workOverFinish(emp_id,date,time,feeling);
+					wd.workFinish(emp_id,date,time,feeling,user_type);
 				} catch (Exception e) {
 					throw new ServletException(e);
 				}
-			}else {
-				try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-					wd.workFinish(emp_id,date,time,feeling);
-				} catch (Exception e) {
-					throw new ServletException(e);
-				}
-			}
 		}
 		//打刻完了画面へ
 		RequestDispatcher rd = request.getRequestDispatcher("/successPunch.jsp");

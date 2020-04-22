@@ -46,7 +46,6 @@ public class HomeControllerServlet extends HttpServlet {
 			request.setAttribute("start_btn_flg", start_btn_flg);
 		}
 
-		System.out.println("start flgは"+start_btn_flg);
 		// フォワードする
 		RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 		rd.forward(request, response);
