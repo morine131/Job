@@ -46,6 +46,10 @@ public class TestServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//doGet(request, response);
+
+		// 文字コード設定
+		request.setCharacterEncoding("UTF-8");
+
 		HttpSession session = request.getSession();
 		String emp_id = (String) session.getAttribute("emp_id");
 		String user_type = (String)session.getAttribute("user_type");
@@ -90,11 +94,11 @@ public class TestServlet extends HttpServlet {
 				throw new ServletException(e);
 			}
 		}else {
-				try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-					wd.workFinish(emp_id,date,time,feeling,user_type);
-				} catch (Exception e) {
-					throw new ServletException(e);
-				}
+			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
+				wd.workFinish(emp_id,date,time,feeling,user_type);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
 		}
 		//打刻完了画面へ
 		RequestDispatcher rd = request.getRequestDispatcher("/successPunch.jsp");

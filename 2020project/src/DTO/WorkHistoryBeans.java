@@ -17,8 +17,22 @@ public class WorkHistoryBeans {
 	private Time work_time;
 	private String note;
 	private String reason;
+	private String much_or_little;
+	private String division;
 
 
+	public String getMuch_or_little() {
+		return much_or_little;
+	}
+	public void setMuch_or_little(String much_or_little) {
+		this.much_or_little = much_or_little;
+	}
+	public String getDivision() {
+		return division;
+	}
+	public void setDivision(String division) {
+		this.division = division;
+	}
 	public String getEmp_id() {
 		return emp_id;
 	}

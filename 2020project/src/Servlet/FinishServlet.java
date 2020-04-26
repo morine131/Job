@@ -45,6 +45,10 @@ public class FinishServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//doGet(request, response);
+
+		// 文字コード設定
+		request.setCharacterEncoding("UTF-8");
+
 		String feeling = request.getParameter("feeling");
 
 		HttpSession session = request.getSession();

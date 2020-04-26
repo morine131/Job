@@ -39,6 +39,8 @@ public class WorkHistoryDAO extends DAO {
 
 	//退勤打刻用メソッド
 	public void workFinish(String emp_id,Date date,Time time,String feeling,String user_type) throws Exception{
+
+
 		String sql = "UPDATE work_history SET finish_time = ?, feeling = ? WHERE (emp_id = ?) and (date = ?);";
 
 		ProcessedTime pTime = new ProcessedTime(time.toString());
@@ -92,7 +94,7 @@ public class WorkHistoryDAO extends DAO {
 			ProcessedTime pt_start = new ProcessedTime(start_time,"start");
 			ProcessedTime pt_finish = new ProcessedTime(finish_time);
 
-			automaticCalculation(pt_start,pt_finish,emp_id,safeDate,holiday,user_type); //休憩時間　基本時間　残業時間　深夜残業時間　作業時間　の自動計算
+			automaticCalculation(pt_start,pt_finish,emp_id,safeDate,holiday,user_type); //遅刻・早退・午前休・午後休の判定　休憩時間　基本時間　超過・不足　残業時間　深夜残業時間　作業時間　の自動計算
 
 
 			// コミットを行う
@@ -110,73 +112,165 @@ public class WorkHistoryDAO extends DAO {
 		int breakTime = 0;
 		int workTime = 0;
 		int standardTime = 0;
-		int baseOverTime = 0;
 		int lateOverTime = 0;
 		int normalOverTime = 0;
+		int muchOrLittle = 0;
+		String division = "";
 		ProcessedTime pBreakTime = new ProcessedTime();
 		ProcessedTime pWorkTime = new ProcessedTime();
 		ProcessedTime pStandardTime = new ProcessedTime();
 		ProcessedTime pNormalOverTime = new ProcessedTime();
 		ProcessedTime pLateOverTime = new ProcessedTime();
+		ProcessedTime pMuchOrLittle = new ProcessedTime();
 
-		System.out.println(user_type);
-		System.out.println(holiday);
+
 
 		//通常勤務者の平日出勤
 		if(holiday.equals("0") && user_type.equals("1")) {
-			//休憩時間を求める
+			//divisionの判定
+			//出勤時刻が12:00以降なら午前休
+			if(startTime >= 24) {
+				division += "午前休";
+			}
+			//24時までに退社している、かつ、13:00以前に退勤している時
+			if(finishTime >= startTime && finishTime <= 26) {
+				division += "午後休";
+			}
+			//午前休の場合の遅刻早退判定
+			if(division.equals("午前休")) {
+				//13:00より出勤が遅いなら
+				if(startTime > 26) {
+					division += "遅刻";
+				}
+				//17:30より退勤が早いなら
+				if(finishTime < 35 && finishTime >= startTime) {
+					division += "早退";
+				}
+				//午後休の時の遅刻早退判定
+			}else if(division.equals("午後休")) {
+				//9:00より出勤が遅いなら
+				if(startTime > 18) {
+					division += "遅刻";
+				}
+				//12:00より退勤が早いなら
+				if(finishTime < 24) {
+					division += "早退";
+				}
+				//通常出勤の時の遅刻早退判定
+			}else {
+				//9:00より遅い出勤なら
+				if(startTime > 18) {
+					division += "遅刻";
+				}
+				//17:30より早い退勤なら
+				if(finishTime >= startTime && finishTime < 35) {
+					division += "早退";
+				}
+			}
 
+			//休憩時間を求める
 			//12:30に出勤打刻したとき or 12:30に退勤打刻したとき休憩時間は30分
 			if(startTime == 25 || finishTime == 25) {
 				breakTime ++;
 			}
-			if(finishTime >= startTime) {
-				//出勤時刻と退勤時刻が12:00~13:00の1時間をまたいだとき、休憩時間に1時間プラス
-				if(startTime <= 24 && finishTime >= 26) {
-					breakTime += 2;
-				}
-
-				//退勤時刻が18:00を超えた時
-				if(finishTime >= 36) {
-					breakTime++;
-				}
-			}else {
+			//退勤が0:00を超えている時
+			if(finishTime <= startTime) {
+				//出勤時刻が12:00以前なら、休憩時間に1時間プラス
 				if(startTime <= 24) {
 					breakTime += 2;
 				}
-				if(startTime <= 36) {
+				//出勤時刻が17:30以前なら、休憩時間に30分プラス
+				if(startTime <= 35 ) {
+					breakTime++;
+				}
+				//23:30までに退勤している時
+			}else {
+				//出勤時刻と退勤時刻が12:00~13:00を跨ぐなら
+				if(startTime <= 24 && finishTime >= 26) {
+					breakTime += 2;
+				}
+				//出勤時刻と退勤時刻が17:30~18:00を跨ぐなら
+				if(startTime <= 35 && finishTime >= 36) {
 					breakTime++;
 				}
 			}
+
 			//休憩時間を元に作業時間を求める
 			if(startTime <= finishTime) {
 				workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime;
 			}else {
-				workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime + 48;
+				workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime;
 			}
 			//作業時間を元に基本時間を求める
 
-			if(workTime >= 15) {
-				standardTime = 15;
+			if(division.indexOf("午前休") != -1) {
+				if(workTime >= 9) {
+					standardTime = 9;
+				}else {
+					standardTime = workTime;
+				}
+			}
+			else if(division.indexOf("午後休") != -1) {
+				if(workTime >= 6) {
+					standardTime = 6;
+				}else {
+					standardTime = workTime;
+				}
 			}else {
-				standardTime = workTime;
+				if(workTime >= 15) {
+					standardTime = 15;
+				}else {
+					standardTime = workTime;
+				}
 			}
 
-			//通常残業時間と深夜残業時間を求める
+			//超過・不足と通常残業時間と深夜残業時間を求める
 
-			baseOverTime += workTime - standardTime;
+			if(division.indexOf("午前休") != -1 ) {
+				muchOrLittle = workTime -9;
+				if(muchOrLittle > 0) {
+					if(finishTime > 44) {
+						lateOverTime += finishTime - 44;
+					}
+					if(finishTime <= 16) {
+						if(finishTime >= 10) {
+							lateOverTime += 14;
+						}else {
+							lateOverTime += 4 + finishTime;
+						}
+					}
+					normalOverTime = muchOrLittle - lateOverTime ;
+				}
+			}
+			else if(division.indexOf("午後休") != -1 ) {
+				muchOrLittle = workTime - 6;
+				if(workTime - 6 > 0) {
+					if(startTime <= 10 ) {
+						lateOverTime +=  10 - startTime;
+					}
+					normalOverTime = muchOrLittle - lateOverTime ;
+				}
+			}else {
+				muchOrLittle = workTime - 15;
+				if(muchOrLittle > 0) {
+					if(finishTime > 44) {
+						lateOverTime += finishTime - 44;
+					}
+					if(finishTime <= 16) {
+						if(finishTime >= 10) {
+							lateOverTime += 14;
+						}else {
+							lateOverTime += 4 + finishTime;
+						}
+					}
+					if(startTime <= 10 ) {
+						lateOverTime +=  10 - startTime;
+					}
 
-			if(startTime <= 10) {
-				lateOverTime += 10 - startTime;
-			}
-			if(finishTime >= 44) {
-				lateOverTime += finishTime - 44;
-			}
-			if(finishTime <= 16) {
-				lateOverTime += finishTime + 4;
+					normalOverTime = muchOrLittle - lateOverTime ;
+				}
 			}
 
-			normalOverTime = baseOverTime - lateOverTime;
 
 
 		}
@@ -187,7 +281,7 @@ public class WorkHistoryDAO extends DAO {
 			if(finishTime>=startTime) {
 				restraintTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex();
 			}else {
-				restraintTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() + 48;
+				restraintTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex();
 			}
 			//拘束時間が6時間以上の時、１時間休憩がはいる
 			if(restraintTime == 13) {
@@ -219,8 +313,14 @@ public class WorkHistoryDAO extends DAO {
 
 		//フレックス勤務者の平日出勤
 		if(holiday.equals("0") && user_type.equals("2")) {
+			//勤務区分を求める
+			if(startTime > 20) {
+				division += "遅刻";
+			}
+			if(finishTime < 30 && finishTime >= startTime) {
+				division += "早退";
+			}
 			//休憩時間を求める
-
 			//12:30に出勤打刻したとき or 12:30に退勤打刻したとき休憩時間は30分
 			if(startTime == 25 || finishTime == 25) {
 				breakTime ++;
@@ -232,7 +332,7 @@ public class WorkHistoryDAO extends DAO {
 				}
 
 				//退勤時刻が18:00を超えた時
-				if(finishTime >= 36) {
+				if(startTime <= 35 && finishTime >= 36) {
 					breakTime++;
 				}
 			}else {
@@ -247,7 +347,7 @@ public class WorkHistoryDAO extends DAO {
 			if(startTime <= finishTime) {
 				workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime;
 			}else {
-				workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime + 48;
+				workTime = ProcessedTime.getDiff(pt_finish, pt_start).getIndex() - breakTime;
 			}
 			//作業時間を元に基本時間を求める
 
@@ -256,6 +356,9 @@ public class WorkHistoryDAO extends DAO {
 			}else {
 				standardTime = workTime;
 			}
+
+			//作業時間を元に日毎の超過・不足を求める
+			muchOrLittle = workTime -15;
 
 			//フレックス適用者は深夜残業時間という考え方はないので、全て通常残業時間とする
 
@@ -301,9 +404,10 @@ public class WorkHistoryDAO extends DAO {
 		pStandardTime.setIndex(standardTime);
 		pNormalOverTime.setIndex(normalOverTime);
 		pLateOverTime.setIndex(lateOverTime);
+		pMuchOrLittle.setIndex(muchOrLittle);
 
 
-		String sql = "UPDATE work_history SET break_time = ?  , work_time = ?  ,standard_time = ? ,over_time = ? ,late_over_time = ? WHERE (emp_id = ?) and (date = ?);";
+		String sql = " UPDATE work_history SET break_time = ?  , work_time = ?  ,standard_time = ? ,over_time = ? ,late_over_time = ? , much_or_little = ?,division = ? WHERE (emp_id = ?) and (date = ?);";
 
 		// SQLを実行してその結果を取得し、実行SQLを渡す
 		try {
@@ -314,8 +418,10 @@ public class WorkHistoryDAO extends DAO {
 			statement.setTime(3,pStandardTime.convertSqlTime());
 			statement.setTime(4,pNormalOverTime.convertSqlTime());
 			statement.setTime(5,pLateOverTime.convertSqlTime());
-			statement.setString(6,emp_id);
-			statement.setDate(7, date);
+			statement.setString(6,muchOrLittle + "");
+			statement.setString(7, division);
+			statement.setString(8,emp_id);
+			statement.setDate(9, date);
 
 			statement.executeUpdate();
 
@@ -579,6 +685,7 @@ public class WorkHistoryDAO extends DAO {
 		return list;
 	}
 
+	//勤務表を表示するメソッド
 	public ArrayList<WorkHistoryBeans> getMonthHistory(String emp_id,int targetYear,int targetMonth) throws Exception{
 
 		int intEndDay = getEndOfMonth(targetYear,targetMonth);
@@ -614,11 +721,13 @@ public class WorkHistoryDAO extends DAO {
 				wb.setHoliday(rs.getString("holiday"));
 				wb.setBreak_time(rs.getTime("break_time"));
 				wb.setStandard_time(rs.getTime("standard_time"));
+				wb.setMuch_or_little(rs.getString("much_or_little"));
 				wb.setOver_time(rs.getTime("over_time"));
 				wb.setLate_over_time(rs.getTime("late_over_time"));
 				wb.setWork_time(rs.getTime("work_time"));
 				wb.setNote(rs.getString("note"));
 				wb.setReason(rs.getString("reason"));
+				wb.setDivision(rs.getString("division"));
 
 				map.put(rs.getDate("date").toString(),wb);
 

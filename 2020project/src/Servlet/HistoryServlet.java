@@ -37,11 +37,34 @@ public class HistoryServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+
+		// 文字コード設定
+				request.setCharacterEncoding("UTF-8");
+
 		HttpSession session = request.getSession();
 		String emp_id = (String)session.getAttribute("emp_id");
 
+		//パラメータが空の時＝メニューからの遷移時、現在年を対象とする
+		//パラメーターに値が含まれている場合＝feelList.jspの操作でGetメソッドが呼び出された時、パラメーターで指定された年を対象とする
+		int targetYear = 0;
+		int targetMonth = 0;
+		Calendar calendar = Calendar.getInstance();
+		if(request.getParameter("target_year") == null) {
+		    targetYear = calendar.get(Calendar.YEAR) ;
+		}else {
+			targetYear= Integer.parseInt(request.getParameter("target_year"));
+		}
+		if(request.getParameter("target_month") == null) {
+		    targetMonth = calendar.get(Calendar.MONTH)+1 ;
+		}else {
+			targetMonth= Integer.parseInt(request.getParameter("target_month"));
+		}
+
+		String division = "";
+
 		int int_weekdays_work_time = 0;
 		int int_weekdays_standard_time = 0;
+		int int_weekdays_much_or_little = 0;
 		int int_weekdays_over_time = 0;
 		int int_weekdays_late_over_time = 0;
 
@@ -51,6 +74,7 @@ public class HistoryServlet extends HttpServlet {
 
 		ProcessedTime p_weekdays_work_time = new ProcessedTime();
 		ProcessedTime p_weekdays_standard_time = new ProcessedTime();
+		ProcessedTime p_weekdays_much_or_little = new ProcessedTime();
 		ProcessedTime p_weekdays_over_time = new ProcessedTime();
 		ProcessedTime p_weekdays_late_over_time = new ProcessedTime();
 
@@ -60,17 +84,13 @@ public class HistoryServlet extends HttpServlet {
 
 		String weekdays_work_time = "";
 		String weekdays_standard_time = "";
+		String weekdays_much_or_little = "";
 		String weekdays_over_time = "";
 		String weekdays_late_over_time = "";
 
 		String holidays_work_time = "";
 		String holidays_over_time = "";
 		String holidays_late_over_time = "";
-
-		Calendar calendar = Calendar.getInstance();
-		int targetYear = calendar.get(Calendar.YEAR);
-		int targetMonth = calendar.get(Calendar.MONTH) + 1;
-		System.out.println("targetMonth: "+ targetMonth);
 
 		ArrayList<WorkHistoryBeans>list = new ArrayList<WorkHistoryBeans>();
 		try (WorkHistoryDAO wd = new WorkHistoryDAO()){
@@ -88,12 +108,14 @@ public class HistoryServlet extends HttpServlet {
 			if(wb.getFinish_time()!= null) {
 				ob.setDate(wb.getDate().toString());
 				ob.setDay(wb.getDate().toString());
+				ob.setDivision(wb.getDivision());
 				ob.setStart_time(wb.getStart_time());
 				ob.setFinish_time(wb.getFinish_time());
 				ob.setFeeling(wb.getFeeling());
 				ob.setHoliday(wb.getHoliday());
 				ob.setBreak_time(wb.getBreak_time());
 				ob.setStandard_time(wb.getStandard_time());
+				ob.setMuch_or_little(wb.getMuch_or_little());
 				ob.setOver_time(wb.getOver_time());
 				ob.setLate_over_time(wb.getLate_over_time());
 				ob.setWork_time(wb.getWork_time());
@@ -106,6 +128,7 @@ public class HistoryServlet extends HttpServlet {
 					ProcessedTime p_weekday_late_over_time = new ProcessedTime(wb.getLate_over_time().toString());
 					int_weekdays_work_time += p_weekday_work_time.getIndex();
 					int_weekdays_standard_time += p_weekday_standard_time.getIndex();
+					int_weekdays_much_or_little += Integer.parseInt(wb.getMuch_or_little());
 					int_weekdays_over_time += p_weekday_over_time.getIndex();
 					int_weekdays_late_over_time += p_weekday_late_over_time.getIndex();
 				}else {
@@ -130,6 +153,9 @@ public class HistoryServlet extends HttpServlet {
 			i++;
 		}
 
+		OutputHistoryBeans ob = new OutputHistoryBeans();
+		ob.setMuch_or_little(int_weekdays_much_or_little + "");
+
 		p_weekdays_work_time.setIndex(int_weekdays_work_time);
 		p_weekdays_standard_time.setIndex(int_weekdays_standard_time);
 		p_weekdays_over_time.setIndex(int_weekdays_over_time);
@@ -150,6 +176,7 @@ public class HistoryServlet extends HttpServlet {
 
 		request.setAttribute("week_work_time", weekdays_work_time);
 		request.setAttribute("week_standard_time", weekdays_standard_time);
+		request.setAttribute("week_much_or_little", ob.getMuch_or_little());
 		request.setAttribute("week_over_time", weekdays_over_time);
 		request.setAttribute("week_late_over_time", weekdays_late_over_time);
 

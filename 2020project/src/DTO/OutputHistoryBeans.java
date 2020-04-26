@@ -3,6 +3,8 @@ package DTO;
 import java.sql.Time;
 import java.util.Calendar;
 
+import myClass.ProcessedTime;
+
 public class OutputHistoryBeans {
 
 	private int date; //1~31までの数字
@@ -18,7 +20,30 @@ public class OutputHistoryBeans {
 	private String work_time;
 	private String note;
 	private String reason;
+	private String division;
+	private String much_or_little;
 
+	public String getDivision() {
+		return division;
+	}
+	public void setDivision(String division) {
+		this.division = division;
+	}
+	public String getMuch_or_little() {
+		return much_or_little;
+	}
+	public void setMuch_or_little(String much_or_little) {
+		String mark = "";
+		int intMOL = Integer.parseInt(much_or_little);
+		if(intMOL < 0) {
+			mark = "-";
+			intMOL *= -1;
+		}
+		ProcessedTime pt = new ProcessedTime();
+		pt.setIndex(intMOL);
+
+		this.much_or_little = mark + pt.convertHHHTime();
+	}
 	public int getDate() {
 		return date;
 	}
