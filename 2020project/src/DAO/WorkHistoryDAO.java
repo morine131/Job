@@ -1,5 +1,6 @@
 package DAO;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,14 +10,15 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import DTO.OutputHistoryBeans;
 import DTO.WorkHistoryBeans;
 import myClass.ProcessedTime;
 
 public class WorkHistoryDAO extends DAO {
 
 	//出勤打刻用メソッド
-	public void workStart(String emp_id,Date date,Time time,String holiday) throws Exception{
-		String sql = "INSERT INTO work_history (emp_id, DATE, start_time,holiday) VALUES (?, ?, ? , ?);";
+	public void workStart(String emp_id,Date date,Time time,String holiday,BigDecimal latitude,BigDecimal longitude) throws Exception{
+		String sql = "INSERT INTO work_history (emp_id, DATE, start_time,holiday,start_latitude,start_longitude) VALUES (?, ?, ? , ?,?,?);";
 
 		// SQLを実行してその結果を取得し、実行SQLを渡す
 		try {
@@ -26,6 +28,8 @@ public class WorkHistoryDAO extends DAO {
 			statement.setDate(2,date);
 			statement.setTime(3, time);
 			statement.setString(4,holiday);
+			statement.setBigDecimal(5, latitude);
+			statement.setBigDecimal(6, longitude);
 
 			statement.executeUpdate();
 
@@ -38,10 +42,10 @@ public class WorkHistoryDAO extends DAO {
 	}
 
 	//退勤打刻用メソッド
-	public void workFinish(String emp_id,Date date,Time time,String feeling,String user_type) throws Exception{
+	public void workFinish(String emp_id,Date date,Time time,String feeling,String user_type ,BigDecimal latitude,BigDecimal longitude) throws Exception{
 
 
-		String sql = "UPDATE work_history SET finish_time = ?, feeling = ? WHERE (emp_id = ?) and (date = ?);";
+		String sql = "UPDATE work_history SET finish_time = ?, feeling = ?,finish_latitude = ?,finish_longitude = ? WHERE (emp_id = ?) and (date = ?);";
 
 		ProcessedTime pTime = new ProcessedTime(time.toString());
 		Calendar cal = new Calendar.Builder().setInstant(date).build();
@@ -58,8 +62,10 @@ public class WorkHistoryDAO extends DAO {
 			PreparedStatement statement = getPreparedStatement(sql);
 			statement.setTime(1, time);
 			statement.setString(2,feeling);
-			statement.setString(3, emp_id);
-			statement.setDate(4, date);
+			statement.setBigDecimal(3, latitude);
+			statement.setBigDecimal(4, longitude);
+			statement.setString(5, emp_id);
+			statement.setDate(6, date);
 
 			statement.executeUpdate();
 
@@ -757,6 +763,74 @@ public class WorkHistoryDAO extends DAO {
 			throw e;
 		}
 		return returnList;
+	}
+
+	//対象日付の勤務データを取得するメソッド
+	public OutputHistoryBeans getDateHistory(Date date, String emp_id) {
+		OutputHistoryBeans ob = new OutputHistoryBeans();
+
+		System.out.println("date: " + date);
+		String sql = "SELECT * FROM work_history WHERE emp_id = ? AND `date`= ?";
+		try {
+			PreparedStatement statement = getPreparedStatement(sql);
+			statement.setString(1, emp_id);
+			statement.setDate(2, date);
+
+			ResultSet rs = statement.executeQuery();
+
+			while (rs.next()) {
+				ob.setDate(rs.getDate("date").toString());
+				ob.setDay(rs.getDate("date").toString());
+				ob.setStart_time(rs.getTime("start_time"));
+				ob.setFinish_time(rs.getTime("finish_time"));
+				ob.setFeeling(rs.getString("feeling"));
+				ob.setHoliday(rs.getString("holiday"));
+				ob.setBreak_time(rs.getTime("break_time"));
+				ob.setStandard_time(rs.getTime("standard_time"));
+				ob.setMuch_or_little(rs.getString("much_or_little"));
+				ob.setOver_time(rs.getTime("over_time"));
+				ob.setLate_over_time(rs.getTime("late_over_time"));
+				ob.setWork_time(rs.getTime("work_time"));
+				ob.setNote(rs.getString("note"));
+				ob.setReason(rs.getString("reason"));
+				ob.setDivision(rs.getString("division"));
+			}
+
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return ob;
+	}
+	//データベースの最小年と最大年を取得するメソッド
+	public ArrayList<Integer> getYearList() {
+		ArrayList<Integer> list = new ArrayList<Integer>();
+
+		String maxStr = "";
+		String minStr = "";
+
+
+		try {
+			String sql = "select  max(`date`) as max_date, min(`date`) as min_date from work_history;";
+
+			PreparedStatement statement = getPreparedStatement(sql);
+			ResultSet rs = statement.executeQuery();
+
+			while(rs.next()) {
+				maxStr = rs.getDate("max_date").toString();
+				minStr = rs.getDate("min_date").toString();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		int maxYear = Integer.parseInt(maxStr.substring(0, 4));
+		int minYear = Integer.parseInt(minStr.substring(0, 4));
+
+		while(minYear <= maxYear) {
+			list.add(minYear);
+			minYear++;
+		}
+		return list;
 	}
 
 	//月末日を取得するメソッド

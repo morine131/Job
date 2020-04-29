@@ -11,6 +11,7 @@
 </head>
 <body>
 	<div class="container" id="app">
+	{{latitude}} {{longitude}}
 		<h2>インターソフト WEB勤務表</h2>
 		<div>
 			<span class="user-name">社員名： ${ user_name}
@@ -22,19 +23,27 @@
 			</form>
 			<div class="date">{{ date }}</div>
 			<form class="start-btn" method="post" action="${pageContext.request.contextPath}/Start">
+				<input type="hidden" :value="latitude" name="latitude">
+				<input type="hidden" :value="longitude" name="longitude">
 				<input class="btn btn-primary" type="submit" value="出勤" <c:if test="${start_btn_flg == 1}">disabled</c:if> >
 			</form>
 			気分を選択して退勤
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="0" name="feeling">
+				<input type="hidden" :value="latitude" name="latitude">
+				<input type="hidden" :value="longitude" name="longitude">
 				<input class="btn btn-success" type="submit" value="アイコン">
 			</form>
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="1" name="feeling">
+				<input type="hidden" :value="latitude" name="latitude">
+				<input type="hidden" :value="longitude" name="longitude">
 				<input class="btn btn-warning" type="submit" value="アイコン">
 			</form>
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="2" name="feeling">
+				<input type="hidden" :value="latitude" name="latitude">
+				<input type="hidden" :value="longitude" name="longitude">
 				<input class="btn btn-danger" type="submit" value="アイコン">
 			</form>
 			<form class="history_btn" method="GET" action="${pageContext.request.contextPath}/History">
@@ -49,12 +58,25 @@
 			<form class="update-pass-btn" method="GET" action="${pageContext.request.contextPath}/Test">
 				<input class="btn " type="submit" value="打刻テスト">
 			</form>
+			<input class="btn " type="button" value="位置情報取得" @click="getPosition()">
 		</div>
 	</div>
 	<script>
 		new Vue({
 			el : "#app",
-			data : {},
+			data : {
+				latitude: 0,
+				longitude: 0
+			},
+			methods : {
+				getPosition : function(){
+					navigator.geolocation.getCurrentPosition(this.successGetPosition);
+				},
+				successGetPosition : function(position){
+					this.latitude = position.coords.latitude
+					this.longitude = position.coords.longitude
+				}
+			},
 			computed : {
 				date : function() {
 					const now = new Date();
@@ -69,6 +91,9 @@
 							+ youbi + ")";
 					return dayStr
 				}
+			},
+			created : function(){
+				this.getPosition()
 			}
 		})
 	</script>

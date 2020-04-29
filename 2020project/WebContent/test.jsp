@@ -27,6 +27,8 @@
 		日: <input type="text"name="day"><br>
 		時: <input type="text" name="hour"><br>
 		分:<input type="text" name="minute"><br>
+						<input type="hidden" :value="latitude" name="latitude">
+				<input type="hidden" :value="longitude" name="longitude">
 		<input class="btn btn-primary" type="submit" value="出勤"><br>
 	</form>
 	<br>
@@ -42,6 +44,8 @@
 
 		<form class="finish-btn" method="post"
 				action="${pageContext.request.contextPath}/Test">
+								<input type="hidden" :value="latitude" name="latitude">
+				<input type="hidden" :value="longitude" name="longitude">
 				<input type="hidden" value="0" name="feeling">
 				<input type="hidden" :value="year" name="year">
 				<input type="hidden" :value="month" name="month">
@@ -52,6 +56,8 @@
  		</form>
  				<form class="finish-btn" method="post"
 				action="${pageContext.request.contextPath}/Test">
+								<input type="hidden" :value="latitude" name="latitude">
+				<input type="hidden" :value="longitude" name="longitude">
 				<input type="hidden" :value="year" name="year">
 				<input type="hidden" :value="month" name="month">
 				<input type="hidden" :value="day" name="day">
@@ -62,6 +68,8 @@
 			</form>
 					<form class="finish-btn" method="post"
 				action="${pageContext.request.contextPath}/Test">
+								<input type="hidden" :value="latitude" name="latitude">
+				<input type="hidden" :value="longitude" name="longitude">
 				<input type="hidden" :value="year" name="year">
 				<input type="hidden" :value="month" name="month">
 				<input type="hidden" :value="day" name="day">
@@ -78,11 +86,40 @@
 		new Vue({
 			el : "#app",
 			data : {
+				latitude: 0,
+				longitude: 0,
 				year: null,
 				month: null,
 				day: null,
 				hour:null,
 				minute: null
+			},
+			methods : {
+				getPosition : function(){
+					navigator.geolocation.getCurrentPosition(this.successGetPosition);
+				},
+				successGetPosition : function(position){
+					this.latitude = position.coords.latitude
+					this.longitude = position.coords.longitude
+				}
+			},
+			computed : {
+				date : function() {
+					const now = new Date();
+					const year = now.getFullYear();
+					const mon = now.getMonth() + 1; //１を足さないとずれる
+					const day = now.getDate();
+					const dayOfWeek = now.getDay(); // 曜日(数値)
+					const dayArray = [ "日", "月", "火", "水", "木", "金", "土", "日" ]
+					const youbi = dayArray[dayOfWeek]
+					//出力用
+					const dayStr = year + "年" + mon + "月" + day + "日" + "("
+							+ youbi + ")";
+					return dayStr
+				}
+			},
+			created : function(){
+				this.getPosition()
 			}
 		})
 	</script>

@@ -39,7 +39,7 @@ public class HistoryServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		// 文字コード設定
-				request.setCharacterEncoding("UTF-8");
+		request.setCharacterEncoding("UTF-8");
 
 		HttpSession session = request.getSession();
 		String emp_id = (String)session.getAttribute("emp_id");

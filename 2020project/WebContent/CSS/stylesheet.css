@@ -1,4 +1,8 @@
 @charset "UTF-8";
+#sample {
+ width: 700px;
+   height: 400px;
+}
 .inline-block{
 	display:inline-block;
 }

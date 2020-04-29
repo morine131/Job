@@ -85,7 +85,14 @@
 							<td>${map.late_over_time }</td>
 							<td>${map.work_time }</td>
 							<td>${map.note }</td>
-							<td><input type="button" value="btn">
+							<td>
+								<form class="home-btn" method="get" action="${pageContext.request.contextPath}/UpdateHistory">
+									<input class="btn" type="submit" value="btn">
+									<input type="hidden" :value="selectedYear" name="target_year">
+									<input type="hidden" :value="selectedMonth" name="target_month">
+									<input type="hidden" value="${parentStatus.count }" name="target_day">
+								</form>
+							</td>
 					</c:forEach>
 
 				</tbody>

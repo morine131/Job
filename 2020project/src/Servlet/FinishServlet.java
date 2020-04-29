@@ -1,6 +1,7 @@
 package Servlet;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -57,6 +58,9 @@ public class FinishServlet extends HttpServlet {
 		Date date = new Date(System.currentTimeMillis());
 		Time time = new Time(System.currentTimeMillis());
 
+		BigDecimal latitude = new BigDecimal(request.getParameter("latitude"));
+		BigDecimal longitude = new BigDecimal(request.getParameter("longitude"));
+
 		//打刻完了画面に渡すdateを整形
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy/MM/dd");
 		request.setAttribute("date", sdfDate.format(date));
@@ -78,7 +82,7 @@ public class FinishServlet extends HttpServlet {
 			}
 		}else {//23:30までに退勤打刻した時
 			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workFinish(emp_id,date,time,feeling,user_type);
+				wd.workFinish(emp_id,date,time,feeling,user_type,latitude,longitude);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}

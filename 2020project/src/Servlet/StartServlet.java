@@ -1,6 +1,7 @@
 package Servlet;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -52,9 +53,12 @@ public class StartServlet extends HttpServlet {
 		 Time time = new Time(System.currentTimeMillis()); //現在の時間
 		 String holiday = getDayOfTheWeek(); //休日か平日かの取得
 
+			BigDecimal latitude = new BigDecimal(request.getParameter("latitude"));
+			BigDecimal longitude = new BigDecimal(request.getParameter("longitude"));
+
 		 //SQLの実行
 		 try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workStart(emp_id,date,time,holiday);
+				wd.workStart(emp_id,date,time,holiday,latitude,longitude);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}

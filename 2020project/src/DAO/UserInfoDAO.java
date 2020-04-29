@@ -73,15 +73,18 @@ public class UserInfoDAO extends DAO {
 
 			ArrayList<String> user_name_list = new ArrayList<String>();
 			ArrayList<String> emp_id_list = new ArrayList<String>();
+			ArrayList<String> user_type_list = new ArrayList<String>();
 
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				user_name_list.add(rs.getString("user_name"));
 				emp_id_list.add(rs.getString("emp_id"));
+				user_type_list.add(rs.getString("user_type"));
 			}
 
 			returnMap.put("user_name_list", user_name_list);
 			returnMap.put("emp_id_list", emp_id_list);
+			returnMap.put("user_type_list", user_type_list);
 			// コミットを行う
 			super.commit();
 		}catch (Exception e) {
