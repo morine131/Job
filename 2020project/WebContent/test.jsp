@@ -24,8 +24,8 @@
 		<h3>出勤テスト打刻</h3>
 		年:<input type="text" name="year"><br>
 		月:<input type="text" name="month"><br>
-		日: <input type="text"name="day"><br>
-		時: <input type="text" name="hour"><br>
+		日:<input type="text" name="day"><br>
+		時:<input type="text" name="hour"><br>
 		分:<input type="text" name="minute"><br>
 						<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">

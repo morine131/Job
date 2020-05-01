@@ -52,7 +52,6 @@ public class UpdateHistoryServlet extends HttpServlet {
 			// TODO: handle exception
 		}
 
-		System.out.println( "ob.getDay: "+ ob.getDay());
 		request.setAttribute("ob", ob);
 
 		RequestDispatcher rd = request.getRequestDispatcher("/updateHistory.jsp");
@@ -66,19 +65,41 @@ public class UpdateHistoryServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//doGet(request, response);
+		int targetYear = Integer.parseInt(request.getParameter("target_year"));
+		int targetMonth = Integer.parseInt(request.getParameter("target_month"));
+		int targetDay = Integer.parseInt(request.getParameter("target_day"));
+
+		HttpSession session = request.getSession();
+		String emp_id = (String) session.getAttribute("emp_id");
+
+		Date date = convertSQLDate(targetYear,targetMonth,targetDay);
 
 		Time start_time = convertSQLTime(request.getParameter("start_time"));
 		Time finish_time = convertSQLTime(request.getParameter("finish_time"));
+		String division = request.getParameter("division");
 		String note = request.getParameter("note");
 		String reason = request.getParameter("reason");
-
+		String feeling = request.getParameter("feeling");
+		System.out.println(request.getParameter("break_time"));
 		if(request.getParameter("break_time") != null) {
 			Time break_time = convertSQLTime(request.getParameter("break_time"));
 			Time standard_time = convertSQLTime(request.getParameter("standard_time"));
 			String much_or_little = convertMOL(request.getParameter("much_or_little"));
+			Time over_time = convertSQLTime(request.getParameter("over_time"));
+			Time late_over_time = convertSQLTime(request.getParameter("late_over_time"));
+			Time work_time = convertSQLTime(request.getParameter("work_time"));
+
+			try (WorkHistoryDAO wd = new WorkHistoryDAO()){
+				wd.updateNormlaHistory(emp_id,date,start_time,finish_time,feeling,break_time,standard_time,over_time,late_over_time,work_time,note,reason,division,much_or_little);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 
 		}
 
+		// HomeControllerにリダイレクトする
+		String ServletPath =  request.getContextPath()+"/History";
+	    response.sendRedirect(ServletPath);
 	}
 
 	public static Date convertSQLDate(int year,int month,int day) {
@@ -87,6 +108,9 @@ public class UpdateHistoryServlet extends HttpServlet {
 	}
 
 	public static Time convertSQLTime(String hhmmss) {
+		if(hhmmss.length() != 8) {
+			hhmmss += ":00";
+		}
 		int hour = Integer.parseInt(hhmmss.substring(0, 2));
 		int minute = Integer.parseInt(hhmmss.substring(3, 5));
 		int second = Integer.parseInt(hhmmss.substring(6, 8));

@@ -29,6 +29,7 @@
 						<th>勤務区分</th>
 						<th>出社時刻</th>
 						<th>退社時刻</th>
+						<th>退勤時の気分</th>
 						<th>休憩時間</th>
 						<th>基本時間</th>
 						<th>超過・不足</th>
@@ -47,6 +48,13 @@
 						<td><input name="division" type="text" value="${ob.division }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="start_time" type="text" value="${ ob.start_time }" form="form"></td>
 						<td><input name="finish_time" type="text" value="${ ob.finish_time }" form="form"></td>
+						<td>
+							<select name="feeling" v-model="feeling" >
+								<option value="0">良好</option>
+								<option value="1">普通</option>
+								<option value="2">イマイチ</option>
+							</select>
+						</td>
 						<td><input name="break_time" type="text" value="${ ob.break_time }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="standard_time" type="text" value="${ ob.standard_time }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="much_or_little" type="text" value="${ ob.much_or_little }" v-bind:disabled="isAuto" form="form"></td>
@@ -143,11 +151,14 @@
 			action="${pageContext.request.contextPath}/Home">
 			<input class="btn" type="submit" value="戻る">
 		</form>
+		<input type="hidden" id="getFeel" value="${ ob.feeling }">
+
 	</div>
 	<script>
 	new Vue({
 				el : "#app",
 				data : {
+					feeling : null,
 					picked: 'auto',
 					isAuto: true,
 					target_year : null,
@@ -178,6 +189,8 @@
 				},
 				created: function(){
 					this.setSelected()
+					this.feeling = document.getElementById('getFeel').value
+
 				},
 				watch: {
 	                picked: function () {

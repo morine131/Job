@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -832,7 +833,119 @@ public class WorkHistoryDAO extends DAO {
 		}
 		return list;
 	}
+	//通常勤務者の修正用メソッド 手入力
+	public void updateNormlaHistory(String emp_id,Date date,Time start_time, Time finish_time, String feeling, Time break_time,
+			Time standard_time, Time over_time, Time late_over_time, Time work_time, String note, String reason,
+			String division, String much_or_little) throws Exception {
+		// TODO 自動生成されたメソッド・スタブ
 
+		String sql = " UPDATE work_history SET start_time = ?,finish_time = ?, feeling = ? break_time = ? , work_time = ?  ,standard_time = ? ,over_time = ? ,late_over_time = ? , much_or_little = ?, division = ? ,reason = ? , note = ? WHERE (emp_id = ?) and (date = ?);";
+
+
+		PreparedStatement statement = getPreparedStatement(sql);
+		statement.setTime(1, start_time);
+		statement.setTime(2, finish_time);
+		statement.setString(3, feeling);
+		statement.setTime(4, break_time);
+		statement.setTime(5, work_time);
+		statement.setTime(6,standard_time);
+		statement.setTime(7, over_time);
+		statement.setTime(8, late_over_time);
+		statement.setString(9, much_or_little);
+		statement.setString(10, division);
+		statement.setString(11, reason);
+		statement.setString(12, note);
+		statement.setString(13, emp_id);
+		statement.setDate(14,date);
+
+		System.out.println(start_time);
+		System.out.println(date);
+		System.out.println(emp_id);
+
+		statement.executeUpdate();
+
+		try {
+			// コミットを行う
+			super.commit();
+		}catch (Exception e) {
+			System.out.println("エラー起きてます");
+			super.rollback();
+			throw e;
+		}
+
+	}
+
+	public HashMap<String, ArrayList<String>> getOverTimeMap(int target_year,ArrayList<String> user_list) throws Exception {
+		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+
+		String sql = "SELECT sec_to_time(sum(time_to_sec(over_time))+sum(time_to_sec(late_over_time))) as total_over_time FROM work_history WHERE emp_id = ? and `date` between ? and ?;";
+
+		for(int n = 0; n < user_list.size();n++) {
+			ArrayList<String>list = new ArrayList<String>();//月の残業時間の入ったリスト
+			//ArrayList<String>cautionList = new ArrayList<String>();//20時間未満なら"0",20~40は"1",40~45は"2",45~は"3"の入ったリスト
+			//12回分のループ
+			for(int i = 0;i<12;i++) {
+				int intEndDay = getEndOfMonth(target_year,i+1);
+
+				System.out.println("user_list.size: " + user_list.size());
+				System.out.println("i: " + i);
+				Date startDay = new Date(target_year - 1900,i,1);
+				Date endDay = new Date(target_year - 1900,i,intEndDay);
+				// SQLを実行してその結果を取得し、実行SQLを渡す
+				try {
+					System.out.println("対象ユーザー： " + user_list.get(n));
+					System.out.println("startDay: " + startDay);
+					System.out.println("endDay: " + endDay);
+					// プリペアステーメントを取得し、実行SQLを渡す
+					PreparedStatement statement = getPreparedStatement(sql);
+					statement.setString(1, user_list.get(n));
+					statement.setDate(2, startDay);
+					statement.setDate(3, endDay);
+
+					// SQLを実行してその結果を取得する
+					ResultSet rs = statement.executeQuery();
+
+					while (rs.next()) {
+						System.out.println(user_list.get(n) + "の" + (i+1) + "月の残業時間は"+  rs.getString("total_over_time"));
+						if(rs.getString("total_over_time") != null) {
+							list.add(rs.getString("total_over_time").toString());
+							String timeStr = rs.getString("total_over_time").substring(0, 2);
+							int time = Integer.parseInt(timeStr);
+							if(time>=45) {
+								list.add("3");
+								//cautionList.add("3");
+							}else if(time>=40) {
+								list.add("2");
+								//cautionList.add("2");
+							}else if(time >= 20) {
+								list.add("1");
+								//cautionList.add("1");
+							}else {
+								list.add("0");
+								//cautionList.add("0");
+							}
+						}else {
+							list.add("00:00:00");
+							list.add("0");
+						//	cautionList.add("0");
+						}
+
+
+					}
+					// コミットを行う
+					super.commit();
+				}catch (SQLException e) {
+					System.out.println("エラー発生");
+					super.rollback();
+					throw e;
+				}
+
+			}
+			map.put(user_list.get(n), list);
+			//map.put(user_list.get(n)+"caution" ,cautionList);
+		}
+		return map;
+	}
 	//月末日を取得するメソッド
 	public int getEndOfMonth(int year,int month) {
 		//取得処理
@@ -852,4 +965,6 @@ public class WorkHistoryDAO extends DAO {
 		}
 		return a;
 	}
+
+
 }
