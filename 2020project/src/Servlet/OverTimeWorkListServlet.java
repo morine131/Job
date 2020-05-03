@@ -46,16 +46,18 @@ public class OverTimeWorkListServlet extends HttpServlet {
 		}
 
 		ArrayList<String> user_list = new ArrayList<String>(); //emp_idのリスト
+		ArrayList<String> name_list = new ArrayList<String>(); //nameのリスト
 		HashMap <String,ArrayList<String>> map = new HashMap <String,ArrayList<String>>();
 
 		try (UserInfoDAO ud = new UserInfoDAO()){
 			user_list = ud.getUserMap().get("emp_id_list");
+			name_list = ud.getUserMap().get("user_name_list");
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 
 		try (WorkHistoryDAO wd = new WorkHistoryDAO()){
-			map = wd.getOverTimeMap(target_year,user_list);
+			map = wd.getOverTimeMap(target_year,user_list,name_list);
 		} catch (Exception e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();

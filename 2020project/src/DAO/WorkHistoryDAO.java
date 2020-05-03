@@ -875,7 +875,7 @@ public class WorkHistoryDAO extends DAO {
 
 	}
 
-	public HashMap<String, ArrayList<String>> getOverTimeMap(int target_year,ArrayList<String> user_list) throws Exception {
+	public HashMap<String, ArrayList<String>> getOverTimeMap(int target_year,ArrayList<String> user_list,ArrayList<String> name_list) throws Exception {
 		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
 
 		String sql = "SELECT sec_to_time(sum(time_to_sec(over_time))+sum(time_to_sec(late_over_time))) as total_over_time FROM work_history WHERE emp_id = ? and `date` between ? and ?;";
@@ -941,7 +941,7 @@ public class WorkHistoryDAO extends DAO {
 				}
 
 			}
-			map.put(user_list.get(n), list);
+			map.put(name_list.get(n), list);
 			//map.put(user_list.get(n)+"caution" ,cautionList);
 		}
 		return map;
