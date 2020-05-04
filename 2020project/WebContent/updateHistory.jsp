@@ -11,6 +11,8 @@
 </head>
 <body>
 	<div class="container" id="app">
+		{{feeling}}
+		${ob.start_latitude }
 		<h2>勤務表修正</h2>
 		<div>
 			<span class="user-name">社員名： ${ user_name} さん</span>
@@ -43,13 +45,13 @@
 								<c:if test="${ob.holiday == '1'}">
 								class="background-red"
 							</c:if>></td>
-						<td>${ob.date }</td>
+						<td>{{target_month}}/{{ target_day }}</td>
 						<td>${ob.day}</td>
 						<td><input name="division" type="text" value="${ob.division }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="start_time" type="text" value="${ ob.start_time }" form="form"></td>
 						<td><input name="finish_time" type="text" value="${ ob.finish_time }" form="form"></td>
 						<td>
-							<select name="feeling" v-model="feeling" >
+							<select name="feeling" v-model="feeling" form="form">
 								<option value="0">良好</option>
 								<option value="1">普通</option>
 								<option value="2">イマイチ</option>
@@ -142,9 +144,15 @@
 		</div>
 		<form class="start-btn" method="POST" id="form"
 			action="${pageContext.request.contextPath}/UpdateHistory">
+			<input type="hidden" value="${flag}" name="flag">
 			<input type="hidden" :value="target_year" name="target_year">
 			<input type="hidden" :value="target_month" name="target_month">
 			<input type="hidden" :value="target_day" name="target_day">
+			<input type="hidden" value="${ob.start_latitude }" name="start_latitude">
+			<input type="hidden" value="${ob.finish_latitude }" name="finish_latitude">
+			<input type="hidden" value="${ob.start_longitude }" name="start_longitude">
+			<input type="hidden" value="${ob.finish_longitude }" name="finish_longitude">
+			<input type="hidden" :value="picked" name="isAuto">
 			<input class="btn" type="submit" value="修正する">
 		</form>
 		<form class="start-btn" method="get"

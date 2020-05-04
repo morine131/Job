@@ -1,6 +1,7 @@
 package Servlet;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 
@@ -36,6 +37,10 @@ public class UpdateHistoryServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
+
+		// 文字コード設定
+		request.setCharacterEncoding("UTF-8");
+
 		int targetYear = Integer.parseInt(request.getParameter("target_year"));
 		int targetMonth = Integer.parseInt(request.getParameter("target_month"));
 		int targetDay = Integer.parseInt(request.getParameter("target_day"));
@@ -51,7 +56,14 @@ public class UpdateHistoryServlet extends HttpServlet {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+		int flag = 0;
+		if(ob.getStart_time() == null) {
+			flag = 2;
+		}else if(ob.getFinish_time() == null) {
+			flag = 1;
+		}
 
+		request.setAttribute("flag", flag);
 		request.setAttribute("ob", ob);
 
 		RequestDispatcher rd = request.getRequestDispatcher("/updateHistory.jsp");
@@ -65,12 +77,31 @@ public class UpdateHistoryServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//doGet(request, response);
+
+		// 文字コード設定
+		request.setCharacterEncoding("UTF-8");
+
+		int flag = Integer.parseInt(request.getParameter("flag"));
+
 		int targetYear = Integer.parseInt(request.getParameter("target_year"));
 		int targetMonth = Integer.parseInt(request.getParameter("target_month"));
 		int targetDay = Integer.parseInt(request.getParameter("target_day"));
 
+		BigDecimal start_latitude = null;
+		System.out.println(request.getParameter("start_latitude"));
+		start_latitude = generateBigDecimal(request.getParameter("start_latitude"));
+		BigDecimal start_longitude = null;
+		start_longitude = generateBigDecimal(request.getParameter("start_longitude"));
+		BigDecimal finish_latitude = null;
+		finish_latitude = generateBigDecimal(request.getParameter("finish_latitude"));
+		BigDecimal finish_longitude = null;
+		finish_longitude = generateBigDecimal(request.getParameter("finish_longitude"));
+
+		Boolean isAuto = request.getParameter("isAuto").equals("auto");
+
 		HttpSession session = request.getSession();
 		String emp_id = (String) session.getAttribute("emp_id");
+		String user_type = (String) session.getAttribute("user_type");
 
 		Date date = convertSQLDate(targetYear,targetMonth,targetDay);
 
@@ -80,22 +111,28 @@ public class UpdateHistoryServlet extends HttpServlet {
 		String note = request.getParameter("note");
 		String reason = request.getParameter("reason");
 		String feeling = request.getParameter("feeling");
-		System.out.println(request.getParameter("break_time"));
-		if(request.getParameter("break_time") != null) {
-			Time break_time = convertSQLTime(request.getParameter("break_time"));
-			Time standard_time = convertSQLTime(request.getParameter("standard_time"));
-			String much_or_little = convertMOL(request.getParameter("much_or_little"));
-			Time over_time = convertSQLTime(request.getParameter("over_time"));
-			Time late_over_time = convertSQLTime(request.getParameter("late_over_time"));
-			Time work_time = convertSQLTime(request.getParameter("work_time"));
+
+		Time break_time = null;
+		Time standard_time = null;
+		String much_or_little = "";
+		Time over_time = null;
+		Time late_over_time = null;
+		Time work_time = null;
+
+		if(! isAuto) {
+			break_time = convertSQLTime(request.getParameter("break_time"));
+			standard_time = convertSQLTime(request.getParameter("standard_time"));
+			much_or_little = convertMOL(request.getParameter("much_or_little"));
+			over_time = convertSQLTime(request.getParameter("over_time"));
+			late_over_time = convertSQLTime(request.getParameter("late_over_time"));
+			work_time = convertSQLTime(request.getParameter("work_time"));
+		}
 
 			try (WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.updateNormlaHistory(emp_id,date,start_time,finish_time,feeling,break_time,standard_time,over_time,late_over_time,work_time,note,reason,division,much_or_little);
+				wd.updateHistory(emp_id,date,start_time,finish_time,feeling,break_time,standard_time,over_time,late_over_time,work_time,note,reason,division,much_or_little,start_latitude,start_longitude,finish_latitude,finish_longitude,isAuto,flag,user_type);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-
-		}
 
 		// HomeControllerにリダイレクトする
 		String ServletPath =  request.getContextPath()+"/History";
@@ -135,10 +172,32 @@ public class UpdateHistoryServlet extends HttpServlet {
 				intMuchOrLittle ++;
 			}
 			much_or_little = "-" + intMuchOrLittle;
+		}else {//プラスの時
+			String hhmm = mol;
+			int semiIndex = hhmm.indexOf(":");
+			String hourStr = hhmm.substring(0,semiIndex);
+			String minuteStr = hhmm.substring(semiIndex+1,semiIndex+3);
+			int hour = Integer.parseInt(hourStr);
+			int minute = Integer.parseInt(minuteStr);
+			intMuchOrLittle += hour*2;
+			if(minute == 30) {
+				intMuchOrLittle ++;
+			}
+			much_or_little = intMuchOrLittle + "";
 		}
-		//プラスの時
+
 
 		return much_or_little;
 	}
 
+	public static BigDecimal generateBigDecimal(String deciStr) {
+		BigDecimal result = new BigDecimal(0) ;
+		System.out.println("deciStr" + deciStr);
+		if(deciStr != "") {
+			System.out.println("ここまでは発生");
+			result = new BigDecimal(deciStr);
+		}
+		System.out.println("result: " +result);
+		return result;
+	}
 }

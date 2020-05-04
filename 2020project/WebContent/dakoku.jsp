@@ -71,6 +71,7 @@
 			methods : {
 				getPosition : function(){
 					navigator.geolocation.getCurrentPosition(this.successGetPosition);
+					console.log("getPosition")
 				},
 				successGetPosition : function(position){
 					this.latitude = position.coords.latitude

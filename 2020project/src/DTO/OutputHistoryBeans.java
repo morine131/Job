@@ -1,5 +1,6 @@
 package DTO;
 
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.Calendar;
 
@@ -22,7 +23,37 @@ public class OutputHistoryBeans {
 	private String reason;
 	private String division;
 	private String much_or_little;
+	private BigDecimal start_latitude;
+	private BigDecimal finish_latitude;
+	private BigDecimal start_longitude;
+	private BigDecimal finish_longitude;
 
+
+
+	public BigDecimal getStart_latitude() {
+		return start_latitude;
+	}
+	public void setStart_latitude(BigDecimal start_latitude) {
+		this.start_latitude = start_latitude;
+	}
+	public BigDecimal getFinish_latitude() {
+		return finish_latitude;
+	}
+	public void setFinish_latitude(BigDecimal finish_latitude) {
+		this.finish_latitude = finish_latitude;
+	}
+	public BigDecimal getStart_longitude() {
+		return start_longitude;
+	}
+	public void setStart_longitude(BigDecimal start_longitude) {
+		this.start_longitude = start_longitude;
+	}
+	public BigDecimal getFinish_longitude() {
+		return finish_longitude;
+	}
+	public void setFinish_longitude(BigDecimal finish_longitude) {
+		this.finish_longitude = finish_longitude;
+	}
 	public String getDivision() {
 		return division;
 	}

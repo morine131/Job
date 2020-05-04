@@ -770,7 +770,6 @@ public class WorkHistoryDAO extends DAO {
 	public OutputHistoryBeans getDateHistory(Date date, String emp_id) {
 		OutputHistoryBeans ob = new OutputHistoryBeans();
 
-		System.out.println("date: " + date);
 		String sql = "SELECT * FROM work_history WHERE emp_id = ? AND `date`= ?";
 		try {
 			PreparedStatement statement = getPreparedStatement(sql);
@@ -783,6 +782,10 @@ public class WorkHistoryDAO extends DAO {
 				ob.setDate(rs.getDate("date").toString());
 				ob.setDay(rs.getDate("date").toString());
 				ob.setStart_time(rs.getTime("start_time"));
+				ob.setStart_latitude(rs.getBigDecimal("start_latitude"));
+				ob.setStart_longitude(rs.getBigDecimal("start_longitude"));
+				ob.setFinish_latitude(rs.getBigDecimal("finish_latitude"));
+				ob.setFinish_longitude(rs.getBigDecimal("finish_longitude"));
 				ob.setFinish_time(rs.getTime("finish_time"));
 				ob.setFeeling(rs.getString("feeling"));
 				ob.setHoliday(rs.getString("holiday"));
@@ -792,9 +795,10 @@ public class WorkHistoryDAO extends DAO {
 				ob.setOver_time(rs.getTime("over_time"));
 				ob.setLate_over_time(rs.getTime("late_over_time"));
 				ob.setWork_time(rs.getTime("work_time"));
+				ob.setDivision(rs.getString("division"));
 				ob.setNote(rs.getString("note"));
 				ob.setReason(rs.getString("reason"));
-				ob.setDivision(rs.getString("division"));
+
 			}
 
 
@@ -833,46 +837,127 @@ public class WorkHistoryDAO extends DAO {
 		}
 		return list;
 	}
-	//通常勤務者の修正用メソッド 手入力
-	public void updateNormlaHistory(String emp_id,Date date,Time start_time, Time finish_time, String feeling, Time break_time,
+	//通常勤務者の修正用メソッド
+	public void updateHistory(String emp_id,Date date,Time start_time, Time finish_time, String feeling, Time break_time,
 			Time standard_time, Time over_time, Time late_over_time, Time work_time, String note, String reason,
-			String division, String much_or_little) throws Exception {
+			String division, String much_or_little,BigDecimal start_latitude,BigDecimal start_longitude,BigDecimal finish_latitude, BigDecimal finish_longitude,Boolean isAuto,int flag,String user_type) throws Exception {
 		// TODO 自動生成されたメソッド・スタブ
 
-		String sql = " UPDATE work_history SET start_time = ?,finish_time = ?, feeling = ? break_time = ? , work_time = ?  ,standard_time = ? ,over_time = ? ,late_over_time = ? , much_or_little = ?, division = ? ,reason = ? , note = ? WHERE (emp_id = ?) and (date = ?);";
+		System.out.println("flag:" + flag);
+		System.out.println("isAuto" + isAuto);
+		//出勤退勤打刻あり、出勤打刻のみ、通常勤務者、自動計算オフ
+		if((flag == 0 ||flag == 1) && user_type.equals("1") && !isAuto ) {
 
+			String sql = " UPDATE work_history SET start_time = ?,finish_time = ?, feeling = ? ,break_time = ? , work_time = ?  ,standard_time = ? ,over_time = ? ,late_over_time = ? , much_or_little = ?, division = ? ,reason = ? , note = ? ,start_latitude = ?,start_longitude = ?,finish_latitude = ?,finish_longitude = ? WHERE (emp_id = ?) and (date = ?);";
 
-		PreparedStatement statement = getPreparedStatement(sql);
-		statement.setTime(1, start_time);
-		statement.setTime(2, finish_time);
-		statement.setString(3, feeling);
-		statement.setTime(4, break_time);
-		statement.setTime(5, work_time);
-		statement.setTime(6,standard_time);
-		statement.setTime(7, over_time);
-		statement.setTime(8, late_over_time);
-		statement.setString(9, much_or_little);
-		statement.setString(10, division);
-		statement.setString(11, reason);
-		statement.setString(12, note);
-		statement.setString(13, emp_id);
-		statement.setDate(14,date);
+			//出退勤済みのメソッド
+			PreparedStatement statement = getPreparedStatement(sql);
+			statement.setTime(1, start_time);
+			statement.setTime(2, finish_time);
+			statement.setString(3, feeling);
+			statement.setTime(4, break_time);
+			statement.setTime(5, work_time);
+			statement.setTime(6,standard_time);
+			statement.setTime(7, over_time);
+			statement.setTime(8, late_over_time);
+			statement.setString(9, much_or_little);
+			statement.setString(10, division);
+			statement.setString(11, reason);
+			statement.setString(12, note);
+			statement.setBigDecimal(13, start_latitude);
+			statement.setBigDecimal(14, start_longitude);
+			statement.setBigDecimal(15, finish_latitude);
+			statement.setBigDecimal(16, finish_longitude);
+			statement.setString(17, emp_id);
+			statement.setDate(18,date);
 
-		System.out.println(start_time);
-		System.out.println(date);
-		System.out.println(emp_id);
-
-		statement.executeUpdate();
-
-		try {
 			// コミットを行う
-			super.commit();
-		}catch (Exception e) {
-			System.out.println("エラー起きてます");
-			super.rollback();
-			throw e;
+			try {
+				statement.executeUpdate();
+
+				super.commit();
+			}catch (Exception e) {
+				super.rollback();
+				e.printStackTrace();
+				throw e;
+
+			}
+			//打刻なし、通常勤務者、自動計算オフ
+		}else if(flag == 2  && user_type.equals("1") && !isAuto ) {
+			System.out.println("打刻なし");
+			String holiday = getHoliday(date);
+			workStart(emp_id,date,start_time,holiday,start_latitude, start_longitude);
+
+			String sql = " UPDATE work_history SET start_time = ?,finish_time = ?, feeling = ? ,break_time = ? , work_time = ?  ,standard_time = ? ,over_time = ? ,late_over_time = ? , much_or_little = ?, division = ? ,reason = ? , note = ? ,start_latitude = ?,start_longitude = ?,finish_latitude = ?,finish_longitude = ? WHERE (emp_id = ?) and (date = ?);";
+
+			//出退勤済みのメソッド
+			PreparedStatement statement = getPreparedStatement(sql);
+			statement.setTime(1, start_time);
+			statement.setTime(2, finish_time);
+			statement.setString(3, feeling);
+			statement.setTime(4, break_time);
+			statement.setTime(5, work_time);
+			statement.setTime(6,standard_time);
+			statement.setTime(7, over_time);
+			statement.setTime(8, late_over_time);
+			statement.setString(9, much_or_little);
+			statement.setString(10, division);
+			statement.setString(11, reason);
+			statement.setString(12, note);
+			statement.setBigDecimal(13, start_latitude);
+			statement.setBigDecimal(14, start_longitude);
+			statement.setBigDecimal(15, finish_latitude);
+			statement.setBigDecimal(16, finish_longitude);
+			statement.setString(17, emp_id);
+			statement.setDate(18,date);
+
+			// コミットを行う
+			try {
+				statement.executeUpdate();
+
+				super.commit();
+			}catch (Exception e) {
+				super.rollback();
+				e.printStackTrace();
+				throw e;
+
+			}
+			//出勤退勤打刻あり、出勤打刻のみ、通常勤務者、自動計算オン
+		}else if((flag == 0 ||flag == 1) && user_type.equals("1") && isAuto ) {
+			//5/5 出勤打刻の処理をさせるところから
+			System.out.println("自動計算発生");
+			workFinish(emp_id,date,finish_time,feeling,user_type ,finish_latitude,finish_longitude);
+
 		}
 
+	}
+
+	private String getHoliday(Date date) {
+		String dateStr = date.toString();
+		int year = Integer.parseInt(dateStr.substring(0, 4));
+		int month = Integer.parseInt(dateStr.substring(5, 7));
+		int day = Integer.parseInt(dateStr.substring(8, 10));
+		Calendar  cal =  new Calendar.Builder().setDate(year, month-1, day).build();
+
+		String result = "0";
+		System.out.println("曜日は" + cal.get(Calendar.DAY_OF_WEEK));
+		switch (cal.get(Calendar.DAY_OF_WEEK)) {
+		case Calendar.SUNDAY: result =  "1" ;
+			break;
+		case Calendar.MONDAY: result =  "0";
+			break;
+		case Calendar.TUESDAY: result =  "0";
+			break;
+		case Calendar.WEDNESDAY: result =  "0";
+			break;
+		case Calendar.THURSDAY: result =  "0";
+			break;
+		case Calendar.FRIDAY: result =  "0";
+			break;
+		case Calendar.SATURDAY: result =  "1";
+			break;
+		}
+		return result;
 	}
 
 	public HashMap<String, ArrayList<String>> getOverTimeMap(int target_year,ArrayList<String> user_list,ArrayList<String> name_list) throws Exception {
@@ -887,15 +972,10 @@ public class WorkHistoryDAO extends DAO {
 			for(int i = 0;i<12;i++) {
 				int intEndDay = getEndOfMonth(target_year,i+1);
 
-				System.out.println("user_list.size: " + user_list.size());
-				System.out.println("i: " + i);
 				Date startDay = new Date(target_year - 1900,i,1);
 				Date endDay = new Date(target_year - 1900,i,intEndDay);
 				// SQLを実行してその結果を取得し、実行SQLを渡す
 				try {
-					System.out.println("対象ユーザー： " + user_list.get(n));
-					System.out.println("startDay: " + startDay);
-					System.out.println("endDay: " + endDay);
 					// プリペアステーメントを取得し、実行SQLを渡す
 					PreparedStatement statement = getPreparedStatement(sql);
 					statement.setString(1, user_list.get(n));
@@ -906,7 +986,6 @@ public class WorkHistoryDAO extends DAO {
 					ResultSet rs = statement.executeQuery();
 
 					while (rs.next()) {
-						System.out.println(user_list.get(n) + "の" + (i+1) + "月の残業時間は"+  rs.getString("total_over_time"));
 						if(rs.getString("total_over_time") != null) {
 							list.add(rs.getString("total_over_time").toString());
 							String timeStr = rs.getString("total_over_time").substring(0, 2);
@@ -927,7 +1006,7 @@ public class WorkHistoryDAO extends DAO {
 						}else {
 							list.add("00:00:00");
 							list.add("0");
-						//	cautionList.add("0");
+							//	cautionList.add("0");
 						}
 
 
@@ -935,7 +1014,6 @@ public class WorkHistoryDAO extends DAO {
 					// コミットを行う
 					super.commit();
 				}catch (SQLException e) {
-					System.out.println("エラー発生");
 					super.rollback();
 					throw e;
 				}

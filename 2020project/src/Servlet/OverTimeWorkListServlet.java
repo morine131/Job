@@ -62,7 +62,6 @@ public class OverTimeWorkListServlet extends HttpServlet {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		System.out.println("テスト出力： "+ map);
 		request.setAttribute("map", map);
 		request.setAttribute("user_list", user_list);
 		RequestDispatcher rd = request.getRequestDispatcher("/overTimeWorkList.jsp");

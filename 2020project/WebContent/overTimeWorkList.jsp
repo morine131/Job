@@ -35,18 +35,18 @@
 				<tbody>
 					<tr>
 						<td></td>
-						<td>1</td>
-						<td>2</td>
-						<td>3</td>
-						<td>4</td>
-						<td>5</td>
-						<td>6</td>
-						<td>7</td>
-						<td>8</td>
-						<td>9</td>
-						<td>10</td>
-						<td>11</td>
-						<td>12</td>
+						<td>1月</td>
+						<td>2月</td>
+						<td>3月</td>
+						<td>4月</td>
+						<td>5月</td>
+						<td>6月</td>
+						<td>7月</td>
+						<td>8月</td>
+						<td>9月</td>
+						<td>10月</td>
+						<td>11月</td>
+						<td>12月</td>
 					</tr>
 					<c:forEach items="${map}" var="obj" varStatus="parentStatus">
 					<tr>
@@ -116,7 +116,6 @@
 					},
 					created: function(){
 						this.setSelected()
-						console.log("初期のselectedは"+this.selected)
 					}
 
 				})
