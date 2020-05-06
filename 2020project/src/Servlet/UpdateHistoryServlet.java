@@ -57,8 +57,10 @@ public class UpdateHistoryServlet extends HttpServlet {
 			// TODO: handle exception
 		}
 		int flag = 0;
-		if(ob.getStart_time() == null) {
+		if(ob.getStart_time() == null && ob.getHoliday() == null) {
 			flag = 2;
+		}else if(ob.getStart_time() == null){
+			flag = 3;
 		}else if(ob.getFinish_time() == null) {
 			flag = 1;
 		}
@@ -88,7 +90,6 @@ public class UpdateHistoryServlet extends HttpServlet {
 		int targetDay = Integer.parseInt(request.getParameter("target_day"));
 
 		BigDecimal start_latitude = null;
-		System.out.println(request.getParameter("start_latitude"));
 		start_latitude = generateBigDecimal(request.getParameter("start_latitude"));
 		BigDecimal start_longitude = null;
 		start_longitude = generateBigDecimal(request.getParameter("start_longitude"));
@@ -192,12 +193,9 @@ public class UpdateHistoryServlet extends HttpServlet {
 
 	public static BigDecimal generateBigDecimal(String deciStr) {
 		BigDecimal result = new BigDecimal(0) ;
-		System.out.println("deciStr" + deciStr);
 		if(deciStr != "") {
-			System.out.println("ここまでは発生");
 			result = new BigDecimal(deciStr);
 		}
-		System.out.println("result: " +result);
 		return result;
 	}
 }

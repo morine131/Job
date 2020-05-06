@@ -48,6 +48,7 @@ public class StartServlet extends HttpServlet {
 		//doGet(request, response);
 		 HttpSession session = request.getSession();
 		 String emp_id = (String) session.getAttribute("emp_id");
+		 String exist = (String)session.getAttribute("exist");
 
 		 Date date = new Date(System.currentTimeMillis()); //現在の日付
 		 Time time = new Time(System.currentTimeMillis()); //現在の時間
@@ -58,7 +59,7 @@ public class StartServlet extends HttpServlet {
 
 		 //SQLの実行
 		 try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workStart(emp_id,date,time,holiday,latitude,longitude);
+				wd.workStart(emp_id,date,time,holiday,latitude,longitude,exist);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}

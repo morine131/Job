@@ -54,6 +54,7 @@ public class TestServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String emp_id = (String) session.getAttribute("emp_id");
 		String user_type = (String)session.getAttribute("user_type");
+		String exist = (String)session.getAttribute("exist");
 
 		String feeling = request.getParameter("feeling");
 
@@ -71,6 +72,7 @@ public class TestServlet extends HttpServlet {
 
 		Time time = new Time(hour,minute,0);
 
+		String note = null;
 
 		//打刻完了画面に渡すdateを整形
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy/MM/dd");
@@ -93,13 +95,13 @@ public class TestServlet extends HttpServlet {
 		//出勤打刻時
 		if(feeling == null) {
 			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workStart(emp_id,date,time,holiday,latitude,longitude);
+				wd.workStart(emp_id,date,time,holiday,latitude,longitude,exist);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
 		}else {
 			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workFinish(emp_id,date,time,feeling,user_type,latitude,longitude);
+				wd.workFinish(emp_id,date,time,feeling,user_type,latitude,longitude,note);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}

@@ -69,10 +69,43 @@
 					</tr>
 					<c:forEach items="${list}" var="map" varStatus="parentStatus">
 						<tr>
-							<td
-								<c:if test="${map.holiday == '1'}">
-								class="background-red"
-							</c:if>></td>
+							<td>
+							<form method="POST" action="${pageContext.request.contextPath}/ChangeHoliday">
+									<input type="hidden" :value="selectedYear" name="target_year">
+									<input type="hidden" :value="selectedMonth" name="target_month">
+									<input type="hidden" value="${parentStatus.count }" name="target_day">
+									<input type="hidden" value="${map.division }" name="division">
+									<input type="hidden" value="${map.start_time }" name="start_time">
+									<input type="hidden" value="${map.finish_time }" name="finish_time">
+									<input type="hidden" value="${map.break_time }" name="break_time">
+									<input type="hidden" value="${map.standard_time }" name="standard_time">
+									<input type="hidden" value="${map.much_or_little }" name="much_or_little">
+									<input type="hidden" value="${map.over_time }" name="over_time">
+									<input type="hidden" value="${map.late_over_time }" name="late_over_time">
+									<input type="hidden" value="${map.work_time }" name="work_time">
+									<input type="hidden" value="${map.note }" name="note">
+									<input type="hidden" value="${map.reason }" name="reason">
+									<input type="hidden" value="${map.start_latitude }" name="start_latitude">
+									<input type="hidden" value="${map.start_longitude }" name="start_longitude">
+									<input type="hidden" value="${map.finish_latitude }" name="finish_latitude">
+									<input type="hidden" value="${map.finish_longitude }" name="finish_longitude">
+									<input type="hidden" value="${map.date }" name="date">
+									<input type="hidden" value="${map.notExist }" name="notExist">
+
+							<c:if test="${map.holiday == '0'}">
+								<input type="hidden" value="平日" name="status">
+								<input type="submit" value="">
+							</c:if>
+							<c:if test="${map.holiday == '1'}">
+								<input type="hidden" value="休日" name="status">
+								<input type="submit" class="background-red" value="">
+							</c:if>
+							<c:if test="${map.holiday == '2'}">
+								<input type="hidden" value="有給" name="status">
+								<input type="submit" class="background-red" value="有">
+							</c:if>
+							</form>
+							</td>
 							<td>${parentStatus.count }</td>
 							<td>${map.day}</td>
 							<td>${map.division}</td>
@@ -153,10 +186,16 @@
 					</tr>
 					<c:forEach items="${list}" var="map" varStatus="parentStatus">
 						<tr>
-							<td
-								<c:if test="${map.holiday == '1'}">
-								class="background-red"
-							</c:if>></td>
+							<td>
+							<c:if test="${map.holiday == '0'}">
+								<input type="button">
+							</c:if>
+							<c:if test="${map.holiday == '1'}">
+								<input type="button" class="background-red">
+							</c:if>
+							<c:if test="${map.holiday == '2'}">
+								<input type="button">
+							</c:if></td>
 							<td>${parentStatus.count }</td>
 							<td>${map.day}</td>
 							<td>${map.division}</td>
@@ -166,7 +205,14 @@
 							<td>${map.work_time }</td>
 							<td>${map.much_or_little }</td>
 							<td>${map.note }</td>
-							<td><input type="button" value="btn">
+							<td>
+							<form class="home-btn" method="get" action="${pageContext.request.contextPath}/UpdateHistory">
+									<input class="btn" type="submit" value="btn">
+									<input type="hidden" :value="selectedYear" name="target_year">
+									<input type="hidden" :value="selectedMonth" name="target_month">
+									<input type="hidden" value="${parentStatus.count }" name="target_day">
+								</form>
+							</td>
 					</c:forEach>
 
 				</tbody>

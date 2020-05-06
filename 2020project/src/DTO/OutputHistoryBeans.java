@@ -10,6 +10,7 @@ public class OutputHistoryBeans {
 
 	private int date; //1~31までの数字
 	private String day; //月〜日までの漢字１文字
+	private int notExist;
 	private Time start_time;
 	private Time finish_time;
 	private String feeling;
@@ -171,6 +172,12 @@ public class OutputHistoryBeans {
 	}
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+	public int getNotExist() {
+		return notExist;
+	}
+	public void setNotExist(int notExist) {
+		this.notExist = notExist;
 	}
 
 

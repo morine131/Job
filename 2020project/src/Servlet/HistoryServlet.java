@@ -105,6 +105,7 @@ public class HistoryServlet extends HttpServlet {
 		int i= 0;
 		for (WorkHistoryBeans wb : list) {
 			OutputHistoryBeans ob = new OutputHistoryBeans();
+			//出退勤されているとき
 			if(wb.getFinish_time()!= null) {
 				ob.setDate(wb.getDate().toString());
 				ob.setDay(wb.getDate().toString());
@@ -142,12 +143,17 @@ public class HistoryServlet extends HttpServlet {
 			}else if(wb.getStart_time() != null){
 				ob.setDate(i+1);
 				ob.setDay(targetYear, targetMonth,i+1);
-				ob.setHoliday(targetYear,targetMonth,i+1);
+				ob.setHoliday(wb.getHoliday());
 				ob.setStart_time(wb.getStart_time());
+			}else if(wb.getHoliday() != null) {
+				ob.setDate(i+1);
+				ob.setDay(targetYear, targetMonth,i+1);
+				ob.setHoliday(wb.getHoliday());
 			}else {
 				ob.setDate(i+1);
 				ob.setDay(targetYear, targetMonth,i+1);
 				ob.setHoliday(targetYear,targetMonth,i+1);
+				ob.setNotExist(1);
 			}
 			resultList.add(ob);
 			i++;

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import DAO.WorkHistoryDAO;
+import DTO.WorkHistoryBeans;
 
 /**
  * Servlet implementation class HomeControllerServlet
@@ -36,13 +37,30 @@ public class HomeControllerServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String admin_flg = (String)session.getAttribute("admin_flg");
 		String start_btn_flg = "";//出勤打刻ボタンの活性非活性切り替えのフラグ
+		String exist = "";//レコードがあるかどうかの判定
+
+
+		WorkHistoryBeans wb = new WorkHistoryBeans();
 
 		String forwardPath = "";
 		if(admin_flg.equals("1")) {
 			forwardPath = "/menu.jsp";
 		}else {
 			forwardPath = "/dakoku.jsp";
-			start_btn_flg = CheckStart(request);
+			wb = CheckStart(request);
+			if(wb.getStart_time() == null) {
+				start_btn_flg = "0";
+			}else {
+				start_btn_flg = "1";
+			}
+
+			if(wb.getHoliday() == null) {
+				exist = "0";
+			}else {
+				exist = "1";
+			}
+
+			session.setAttribute("exist", exist);
 			request.setAttribute("start_btn_flg", start_btn_flg);
 		}
 
@@ -59,7 +77,9 @@ public class HomeControllerServlet extends HttpServlet {
 		//doGet(request, response);
 	}
 
-	private String CheckStart(HttpServletRequest request) throws ServletException {
+	private WorkHistoryBeans CheckStart(HttpServletRequest request) throws ServletException {
+
+		WorkHistoryBeans wb = new WorkHistoryBeans();
 
 		 HttpSession session = request.getSession();
 		 String emp_id = (String) session.getAttribute("emp_id");
@@ -69,11 +89,11 @@ public class HomeControllerServlet extends HttpServlet {
 
 		 //SQLの実行
 		 try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				flg = wd.checkStart(emp_id,date);
+				wb = wd.checkStart(emp_id,date);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
-		return flg;
+		return wb;
 	}
 
 }

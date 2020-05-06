@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import DAO.WorkHistoryDAO;
-import myClass.ProcessedTime;
 
 /**
  * Servlet implementation class FinishServlet
@@ -57,6 +56,7 @@ public class FinishServlet extends HttpServlet {
 		String user_type = (String)session.getAttribute("user_type");
 		Date date = new Date(System.currentTimeMillis());
 		Time time = new Time(System.currentTimeMillis());
+		String note = null;
 
 		BigDecimal latitude = new BigDecimal(request.getParameter("latitude"));
 		BigDecimal longitude = new BigDecimal(request.getParameter("longitude"));
@@ -72,21 +72,12 @@ public class FinishServlet extends HttpServlet {
 		//打刻完了画面に渡す文字列を指定
 		request.setAttribute("punchMessage", "退勤");
 
-		//帰社時刻が0:00〜8:00の間、前日分の帰社打刻とするにする処理
-		ProcessedTime pTime = new ProcessedTime(time.toString());
-		if(pTime.getIndex() <= 16) {
 			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workOverFinish(emp_id,date,time,feeling);
+				wd.workFinish(emp_id,date,time,feeling,user_type,latitude,longitude,note);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
-		}else {//23:30までに退勤打刻した時
-			try(WorkHistoryDAO wd = new WorkHistoryDAO()){
-				wd.workFinish(emp_id,date,time,feeling,user_type,latitude,longitude);
-			} catch (Exception e) {
-				throw new ServletException(e);
-			}
-		}
+
 		//検索一覧画面へ
 		RequestDispatcher rd = request.getRequestDispatcher("/successPunch.jsp");
 		rd.forward(request, response);

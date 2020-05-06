@@ -82,9 +82,8 @@ public class ProcessedTime {
 
 		ProcessedTime pt = new ProcessedTime("00:00:00");
 		int ptIndex = 0;
-											//etc 9:00~2:00の時間を調べたいとき（退社が0:00を過ぎた時）、pt1に9:00 pt2に2:00を入れる
-			ptIndex =  pt1.getIndex() + pt2.getIndex()  ;
-
+			//etc 9:00~2:00の時間を調べたいとき（退社が0:00を過ぎた時）、pt1に9:00 pt2に2:00を入れる
+			ptIndex =  pt1.getIndex() + pt2.getIndex();
 		pt.setIndex(ptIndex);
 		return pt;
 	}

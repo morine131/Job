@@ -11,7 +11,7 @@
 </head>
 <body>
 	<div class="container" id="app">
-	{{latitude}} {{longitude}}
+	exist: ${ exist }
 		<h2>インターソフト WEB勤務表</h2>
 		<div>
 			<span class="user-name">社員名： ${ user_name}
@@ -25,7 +25,7 @@
 			<form class="start-btn" method="post" action="${pageContext.request.contextPath}/Start">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn btn-primary" type="submit" value="出勤" <c:if test="${start_btn_flg == 1}">disabled</c:if> >
+				<input class="btn btn-primary" type="submit" value="出勤" <c:if test="${start_btn_flg == '1'}">disabled</c:if> >
 			</form>
 			気分を選択して退勤
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
