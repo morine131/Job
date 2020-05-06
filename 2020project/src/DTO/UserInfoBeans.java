@@ -15,6 +15,13 @@ public class UserInfoBeans {
 	private String admin_flg;
 	private String pass;
 	private String del_flg;
+	private int paid_vacations;
+	public int getPaid_vacations() {
+		return paid_vacations;
+	}
+	public void setPaid_vacations(int paid_vacations) {
+		this.paid_vacations = paid_vacations;
+	}
 	public String getEmp_id() {
 		return emp_id;
 	}

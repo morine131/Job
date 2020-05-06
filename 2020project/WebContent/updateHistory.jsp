@@ -24,7 +24,6 @@
 			<table class="update_history table-bordered table-hover">
 				<tbody>
 					<tr>
-						<th>休日</th>
 						<th>日付</th>
 						<th>曜日</th>
 						<th>勤務区分</th>
@@ -40,17 +39,6 @@
 						<th>備考</th>
 					</tr>
 					<tr>
-						<td>
-							<c:if test="${ob.holiday == '0'}">
-								<input type="button">
-							</c:if>
-							<c:if test="${ob.holiday == '1'}">
-								<input type="button" class="background-red">
-							</c:if>
-							<c:if test="${ob.holiday == '2'}">
-								<input type="button">
-							</c:if>
-							</td>
 						<td>{{target_month}}/{{ target_day }}</td>
 						<td>${ob.day}</td>
 						<td><input name="division" type="text"

@@ -12,8 +12,8 @@
 <title>ログイン画面</title>
 </head>
 <body>
-
- <!--/* ログイン失敗/ログアウトはgetパラメータにステータスが渡されているので、Thymeleafではparamから取得 */-->
+<div class="container">
+<h2>勤務表ログイン</h2>
 		<h4>
 			<font color="red">${message} </font>
 			<%
@@ -21,15 +21,17 @@
 			%>
 		</h4>
 
-    <!--/* 「/sign_in」がログイン判定処理を呼び出すViewNameとなっている */-->
 	<form action="${pageContext.request.contextPath}/Login" method="post">
-	    <input type="text" name="emp_id">社員ID
+		<div class="login-form">
+	    <input type="text" name="emp_id" placeholder="社員ID">
 	    <br/>
-	    <input type="password" name="pass">パスワード
-
+	   	<input type="password" name="pass" placeholder = "パスワード">
+		</div>
 	    <br/>
 
-	    <input type="submit" value="ログイン">
+	    <input type="submit" class="btn btn-info" value="ログイン">
+
 	</form>
+</div>
 </body>
 </html>

@@ -79,6 +79,7 @@ public class LoginServlet extends HttpServlet {
 				session.setAttribute("emp_id", loginUser.getEmp_id());
 				session.setAttribute("admin_flg",loginUser.getAdmin_flg());
 				session.setAttribute("user_type",loginUser.getUser_type());
+				session.setAttribute("paid_vacations", loginUser.getPaid_vacations());
 
 
 				// フォワードパスを指定

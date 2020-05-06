@@ -22,16 +22,23 @@
 		<input class="btn btn-secondary" type="submit" value="ログアウト">
 		</form>
 		<div>
+			年を選択
+		</div>
+
+		<div>
 		<input class="yajirushi-btn" type="submit" value="＜" v-on:click="beforeYear">
-		<select name="example" v-model="selectedYear" v-on:change="changePage" class="inline-block">
+		<select name="example" v-model="selectedYear" v-on:change="changePage" class="inline-block form-control">
 			<option>2020</option>
 			<option>2021</option>
 		</select>
 			<input class="yajirushi-btn" type="submit" value="＞" v-on:click="nextYear">
 		</div>
+		<div>
+		月を選択
+		</div>
 				<div>
 						<input class="yajirushi-btn" type="submit" value="＜" v-on:click="beforeMonth">
-		<select name="example" v-model="selectedMonth" v-on:change="changePage" class="inline-block">
+		<select name="example" v-model="selectedMonth" v-on:change="changePage" class="inline-block form-control">
 				<option>1</option>
 				<option>2</option>
 				<option>3</option>
@@ -47,6 +54,12 @@
 		</select>
 			<input class="yajirushi-btn" type="submit" value="＞" v-on:click="nextMonth">
 		</div>
+		<h4>
+			<font color="red">${confirm_message} </font>
+			<%
+				session.removeAttribute("confirm_message");
+			%>
+		</h4>
 		<c:if test="${user_type == '1'}">
 			<table class="feel-table table-bordered table-hover">
 				<tbody>
@@ -124,6 +137,7 @@
 									<input type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
 									<input type="hidden" value="${parentStatus.count }" name="target_day">
+									<input type="hidden" value="${map.day }" name="day">
 								</form>
 							</td>
 					</c:forEach>
@@ -187,15 +201,42 @@
 					<c:forEach items="${list}" var="map" varStatus="parentStatus">
 						<tr>
 							<td>
+							<form method="POST" action="${pageContext.request.contextPath}/ChangeHoliday">
+									<input type="hidden" :value="selectedYear" name="target_year">
+									<input type="hidden" :value="selectedMonth" name="target_month">
+									<input type="hidden" value="${parentStatus.count }" name="target_day">
+									<input type="hidden" value="${map.division }" name="division">
+									<input type="hidden" value="${map.start_time }" name="start_time">
+									<input type="hidden" value="${map.finish_time }" name="finish_time">
+									<input type="hidden" value="${map.break_time }" name="break_time">
+									<input type="hidden" value="${map.standard_time }" name="standard_time">
+									<input type="hidden" value="${map.much_or_little }" name="much_or_little">
+									<input type="hidden" value="${map.over_time }" name="over_time">
+									<input type="hidden" value="${map.late_over_time }" name="late_over_time">
+									<input type="hidden" value="${map.work_time }" name="work_time">
+									<input type="hidden" value="${map.note }" name="note">
+									<input type="hidden" value="${map.reason }" name="reason">
+									<input type="hidden" value="${map.start_latitude }" name="start_latitude">
+									<input type="hidden" value="${map.start_longitude }" name="start_longitude">
+									<input type="hidden" value="${map.finish_latitude }" name="finish_latitude">
+									<input type="hidden" value="${map.finish_longitude }" name="finish_longitude">
+									<input type="hidden" value="${map.date }" name="date">
+									<input type="hidden" value="${map.notExist }" name="notExist">
+
 							<c:if test="${map.holiday == '0'}">
-								<input type="button">
+								<input type="hidden" value="平日" name="status">
+								<input type="submit" value="">
 							</c:if>
 							<c:if test="${map.holiday == '1'}">
-								<input type="button" class="background-red">
+								<input type="hidden" value="休日" name="status">
+								<input type="submit" class="background-red" value="">
 							</c:if>
 							<c:if test="${map.holiday == '2'}">
-								<input type="button">
-							</c:if></td>
+								<input type="hidden" value="有給" name="status">
+								<input type="submit" class="background-red" value="有">
+							</c:if>
+							</form>
+							</td>
 							<td>${parentStatus.count }</td>
 							<td>${map.day}</td>
 							<td>${map.division}</td>
@@ -249,6 +290,16 @@
 				</tbody>
 			</table>
 		</c:if>
+		<table>
+			<tbody>
+				<tr>
+					<th>有給残日数</th>
+				</tr>
+				<tr>
+					<td>${ paid_vacations}日</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 	<script>
 		new Vue(

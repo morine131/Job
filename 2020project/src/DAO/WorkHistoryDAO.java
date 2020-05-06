@@ -159,8 +159,6 @@ public class WorkHistoryDAO extends DAO {
 		ProcessedTime pLateOverTime = new ProcessedTime();
 		ProcessedTime pMuchOrLittle = new ProcessedTime();
 
-
-
 		//通常勤務者の平日出勤
 		if(holiday.equals("0") && user_type.equals("1")) {
 			//divisionの判定
@@ -976,6 +974,29 @@ public class WorkHistoryDAO extends DAO {
 			// コミットを行う
 			super.commit();
 		}catch (SQLException e) {
+			super.rollback();
+			throw e;
+		}
+
+	}
+
+	public void updateAuto(String emp_id,Date date,Time start_time,Time finish_time , String holiday,String feeling,String user_type ,BigDecimal finish_latitude,BigDecimal finish_longitude ,String note) throws Exception {
+		String sql = "UPDATE work_history SET start_time = ?,holiday = ? WHERE emp_id = ? AND `date` = ?;";
+		try {
+			// プリペアステーメントを取得し、実行SQLを渡す
+			PreparedStatement statement = getPreparedStatement(sql);
+			statement.setTime(1, start_time);
+			statement.setString(2,holiday);
+			statement.setString(3, emp_id);
+			statement.setDate(4,date);
+
+			statement.executeUpdate();
+
+			workFinish(emp_id,date,finish_time,feeling,user_type ,finish_latitude,finish_longitude,note);
+			// コミットを行う
+			super.commit();
+		}catch (Exception e) {
+			e.printStackTrace();
 			super.rollback();
 			throw e;
 		}

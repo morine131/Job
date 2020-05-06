@@ -34,6 +34,7 @@ public class UserInfoDAO extends DAO {
 			returnList.setAdmin_flg(rs.getString("admin_flg"));
 			returnList.setPass(rs.getString("pass"));
 			returnList.setDel_flg(rs.getString("del_flg"));
+			returnList.setPaid_vacations(rs.getInt("paid_vacations"));
 
 		}
 
@@ -93,5 +94,30 @@ public class UserInfoDAO extends DAO {
 		}
 
 		return returnMap;
+	}
+	//有給日数更新メソッド
+	public void updatePaidVacations(String emp_id,String plus_or_minus) throws Exception{
+		String sql = "";
+
+		if(plus_or_minus.equals("plus")) {
+			sql = "UPDATE emp_list SET paid_vacations  = paid_vacations +1 WHERE emp_id = ?;";
+		}else {
+			sql = "UPDATE emp_list SET paid_vacations  = paid_vacations -1 WHERE emp_id = ?;";
+		}
+
+		// SQLを実行してその結果を取得し、実行SQLを渡す
+		try {
+			// プリペアステーメントを取得し、実行SQLを渡す
+			PreparedStatement statement = getPreparedStatement(sql);
+			statement.setString(1,emp_id);
+
+			statement.executeUpdate();
+
+			// コミットを行う
+			super.commit();
+		}catch (Exception e) {
+			super.rollback();
+			throw e;
+		}
 	}
 }

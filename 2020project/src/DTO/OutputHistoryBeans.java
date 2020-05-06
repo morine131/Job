@@ -89,6 +89,9 @@ public class OutputHistoryBeans {
 	public String getDay() {
 		return day;
 	}
+	public void setDay(String str,String dammy) {
+		this.day = str;
+	}
 	public void setDay(String yyyymmdd) {
 		int year = Integer.parseInt(yyyymmdd.substring(0, 4));
 		int month = Integer.parseInt(yyyymmdd.substring(5, 7));

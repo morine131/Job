@@ -3,11 +3,15 @@
  width: 700px;
    height: 400px;
 }
+.login-form{
+	padding-top:30px;
+}
 .inline-block{
 	display:inline-block;
 }
 .container{
 	text-align:center;
+	margin-top:50px;
 }
 .user-name{
 	font-size:20px;
@@ -25,10 +29,15 @@
 	width:25px;
 	display:inline-block;
 	font-size: 20px;
-
 }
 .date{
 	font-size:28px;
+	margin-top:20px;
+}
+.menu-btn {
+    width: 165px;
+    border: solid;
+    margin: 4px;
 }
 .feel-table{
 	width:1000px;
@@ -53,4 +62,7 @@
 }
 .background-red{
 	background-color:#ff7f7f;
+}
+.form-control{
+	width:8%;
 }
