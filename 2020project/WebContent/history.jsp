@@ -12,6 +12,7 @@
 <body>
 	<div class="container" id="app">
 		<h2>勤務表</h2>
+		<div>
 		<form class="home-btn" method="get"
 			action="${pageContext.request.contextPath}/Home">
 			<input class="btn" type="submit" value="戻る">
@@ -19,40 +20,42 @@
 		<span class="user-name">${ user_name} さん</span>
 		<form class="logout-btn" method="post"
 			action="${pageContext.request.contextPath}/Logout">
-		<input class="btn btn-secondary" type="submit" value="ログアウト">
+			<input class="btn btn-secondary" type="submit" value="ログアウト">
 		</form>
-		<div>
-			年を選択
 		</div>
-
-		<div>
-		<input class="yajirushi-btn" type="submit" value="＜" v-on:click="beforeYear">
-		<select name="example" v-model="selectedYear" v-on:change="changePage" class="inline-block form-control">
-			<option>2020</option>
-			<option>2021</option>
-		</select>
-			<input class="yajirushi-btn" type="submit" value="＞" v-on:click="nextYear">
+		<div class="inline-block select-box">
+			<div>年を選択</div>
+			<div>
+				<div class="left-btn" v-on:click="beforeYear"></div>
+				<select name="example" v-model="selectedYear"
+					v-on:change="changePage" class="inline-block form-control">
+					<option>2020</option>
+					<option>2021</option>
+				</select>
+				<div class="right-btn" v-on:click="nextYear"></div>
+			</div>
 		</div>
-		<div>
-		月を選択
-		</div>
-				<div>
-						<input class="yajirushi-btn" type="submit" value="＜" v-on:click="beforeMonth">
-		<select name="example" v-model="selectedMonth" v-on:change="changePage" class="inline-block form-control">
-				<option>1</option>
-				<option>2</option>
-				<option>3</option>
-				<option>4</option>
-				<option>5</option>
-				<option>6</option>
-				<option>7</option>
-				<option>8</option>
-				<option>9</option>
-				<option>10</option>
-				<option>11</option>
-				<option>12</option>
-		</select>
-			<input class="yajirushi-btn" type="submit" value="＞" v-on:click="nextMonth">
+		<div class="inline-block select-box">
+			<div>月を選択</div>
+			<div>
+				<div class="left-btn" v-on:click="beforeMonth"></div>
+				<select name="example" v-model="selectedMonth"
+					v-on:change="changePage" class="inline-block form-control">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
+				<div class="right-btn" v-on:click="nextMonth"></div>
+			</div>
 		</div>
 		<h4>
 			<font color="red">${confirm_message} </font>
@@ -83,41 +86,48 @@
 					<c:forEach items="${list}" var="map" varStatus="parentStatus">
 						<tr>
 							<td>
-							<form method="POST" action="${pageContext.request.contextPath}/ChangeHoliday">
+								<form method="POST"
+									action="${pageContext.request.contextPath}/ChangeHoliday">
 									<input type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
-									<input type="hidden" value="${parentStatus.count }" name="target_day">
-									<input type="hidden" value="${map.division }" name="division">
-									<input type="hidden" value="${map.start_time }" name="start_time">
-									<input type="hidden" value="${map.finish_time }" name="finish_time">
-									<input type="hidden" value="${map.break_time }" name="break_time">
-									<input type="hidden" value="${map.standard_time }" name="standard_time">
-									<input type="hidden" value="${map.much_or_little }" name="much_or_little">
+									<input type="hidden" value="${parentStatus.count }"
+										name="target_day"> <input type="hidden"
+										value="${map.division }" name="division"> <input
+										type="hidden" value="${map.start_time }" name="start_time">
+									<input type="hidden" value="${map.finish_time }"
+										name="finish_time"> <input type="hidden"
+										value="${map.break_time }" name="break_time"> <input
+										type="hidden" value="${map.standard_time }"
+										name="standard_time"> <input type="hidden"
+										value="${map.much_or_little }" name="much_or_little">
 									<input type="hidden" value="${map.over_time }" name="over_time">
-									<input type="hidden" value="${map.late_over_time }" name="late_over_time">
-									<input type="hidden" value="${map.work_time }" name="work_time">
-									<input type="hidden" value="${map.note }" name="note">
-									<input type="hidden" value="${map.reason }" name="reason">
-									<input type="hidden" value="${map.start_latitude }" name="start_latitude">
-									<input type="hidden" value="${map.start_longitude }" name="start_longitude">
-									<input type="hidden" value="${map.finish_latitude }" name="finish_latitude">
-									<input type="hidden" value="${map.finish_longitude }" name="finish_longitude">
+									<input type="hidden" value="${map.late_over_time }"
+										name="late_over_time"> <input type="hidden"
+										value="${map.work_time }" name="work_time"> <input
+										type="hidden" value="${map.note }" name="note"> <input
+										type="hidden" value="${map.reason }" name="reason"> <input
+										type="hidden" value="${map.start_latitude }"
+										name="start_latitude"> <input type="hidden"
+										value="${map.start_longitude }" name="start_longitude">
+									<input type="hidden" value="${map.finish_latitude }"
+										name="finish_latitude"> <input type="hidden"
+										value="${map.finish_longitude }" name="finish_longitude">
 									<input type="hidden" value="${map.date }" name="date">
 									<input type="hidden" value="${map.notExist }" name="notExist">
 
-							<c:if test="${map.holiday == '0'}">
-								<input type="hidden" value="平日" name="status">
-								<input type="submit" value="">
-							</c:if>
-							<c:if test="${map.holiday == '1'}">
-								<input type="hidden" value="休日" name="status">
-								<input type="submit" class="background-red" value="">
-							</c:if>
-							<c:if test="${map.holiday == '2'}">
-								<input type="hidden" value="有給" name="status">
-								<input type="submit" class="background-red" value="有">
-							</c:if>
-							</form>
+									<c:if test="${map.holiday == '0'}">
+										<input type="hidden" value="平日" name="status">
+										<input type="submit" value="">
+									</c:if>
+									<c:if test="${map.holiday == '1'}">
+										<input type="hidden" value="休日" name="status">
+										<input type="submit" class="background-red" value="">
+									</c:if>
+									<c:if test="${map.holiday == '2'}">
+										<input type="hidden" value="有給" name="status">
+										<input type="submit" class="background-red" value="有">
+									</c:if>
+								</form>
 							</td>
 							<td>${parentStatus.count }</td>
 							<td>${map.day}</td>
@@ -132,12 +142,14 @@
 							<td>${map.work_time }</td>
 							<td>${map.note }</td>
 							<td>
-								<form class="home-btn" method="get" action="${pageContext.request.contextPath}/UpdateHistory">
-									<input class="btn" type="submit" value="btn">
-									<input type="hidden" :value="selectedYear" name="target_year">
+								<form class="home-btn" method="get"
+									action="${pageContext.request.contextPath}/UpdateHistory">
+									<input class="btn" type="submit" value="btn"> <input
+										type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
-									<input type="hidden" value="${parentStatus.count }" name="target_day">
-									<input type="hidden" value="${map.day }" name="day">
+									<input type="hidden" value="${parentStatus.count }"
+										name="target_day"> <input type="hidden"
+										value="${map.day }" name="day">
 								</form>
 							</td>
 					</c:forEach>
@@ -201,41 +213,48 @@
 					<c:forEach items="${list}" var="map" varStatus="parentStatus">
 						<tr>
 							<td>
-							<form method="POST" action="${pageContext.request.contextPath}/ChangeHoliday">
+								<form method="POST"
+									action="${pageContext.request.contextPath}/ChangeHoliday">
 									<input type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
-									<input type="hidden" value="${parentStatus.count }" name="target_day">
-									<input type="hidden" value="${map.division }" name="division">
-									<input type="hidden" value="${map.start_time }" name="start_time">
-									<input type="hidden" value="${map.finish_time }" name="finish_time">
-									<input type="hidden" value="${map.break_time }" name="break_time">
-									<input type="hidden" value="${map.standard_time }" name="standard_time">
-									<input type="hidden" value="${map.much_or_little }" name="much_or_little">
+									<input type="hidden" value="${parentStatus.count }"
+										name="target_day"> <input type="hidden"
+										value="${map.division }" name="division"> <input
+										type="hidden" value="${map.start_time }" name="start_time">
+									<input type="hidden" value="${map.finish_time }"
+										name="finish_time"> <input type="hidden"
+										value="${map.break_time }" name="break_time"> <input
+										type="hidden" value="${map.standard_time }"
+										name="standard_time"> <input type="hidden"
+										value="${map.much_or_little }" name="much_or_little">
 									<input type="hidden" value="${map.over_time }" name="over_time">
-									<input type="hidden" value="${map.late_over_time }" name="late_over_time">
-									<input type="hidden" value="${map.work_time }" name="work_time">
-									<input type="hidden" value="${map.note }" name="note">
-									<input type="hidden" value="${map.reason }" name="reason">
-									<input type="hidden" value="${map.start_latitude }" name="start_latitude">
-									<input type="hidden" value="${map.start_longitude }" name="start_longitude">
-									<input type="hidden" value="${map.finish_latitude }" name="finish_latitude">
-									<input type="hidden" value="${map.finish_longitude }" name="finish_longitude">
+									<input type="hidden" value="${map.late_over_time }"
+										name="late_over_time"> <input type="hidden"
+										value="${map.work_time }" name="work_time"> <input
+										type="hidden" value="${map.note }" name="note"> <input
+										type="hidden" value="${map.reason }" name="reason"> <input
+										type="hidden" value="${map.start_latitude }"
+										name="start_latitude"> <input type="hidden"
+										value="${map.start_longitude }" name="start_longitude">
+									<input type="hidden" value="${map.finish_latitude }"
+										name="finish_latitude"> <input type="hidden"
+										value="${map.finish_longitude }" name="finish_longitude">
 									<input type="hidden" value="${map.date }" name="date">
 									<input type="hidden" value="${map.notExist }" name="notExist">
 
-							<c:if test="${map.holiday == '0'}">
-								<input type="hidden" value="平日" name="status">
-								<input type="submit" value="">
-							</c:if>
-							<c:if test="${map.holiday == '1'}">
-								<input type="hidden" value="休日" name="status">
-								<input type="submit" class="background-red" value="">
-							</c:if>
-							<c:if test="${map.holiday == '2'}">
-								<input type="hidden" value="有給" name="status">
-								<input type="submit" class="background-red" value="有">
-							</c:if>
-							</form>
+									<c:if test="${map.holiday == '0'}">
+										<input type="hidden" value="平日" name="status">
+										<input type="submit" value="">
+									</c:if>
+									<c:if test="${map.holiday == '1'}">
+										<input type="hidden" value="休日" name="status">
+										<input type="submit" class="background-red" value="">
+									</c:if>
+									<c:if test="${map.holiday == '2'}">
+										<input type="hidden" value="有給" name="status">
+										<input type="submit" class="background-red" value="有">
+									</c:if>
+								</form>
 							</td>
 							<td>${parentStatus.count }</td>
 							<td>${map.day}</td>
@@ -247,11 +266,13 @@
 							<td>${map.much_or_little }</td>
 							<td>${map.note }</td>
 							<td>
-							<form class="home-btn" method="get" action="${pageContext.request.contextPath}/UpdateHistory">
-									<input class="btn" type="submit" value="btn">
-									<input type="hidden" :value="selectedYear" name="target_year">
+								<form class="home-btn" method="get"
+									action="${pageContext.request.contextPath}/UpdateHistory">
+									<input class="btn" type="submit" value="btn"> <input
+										type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
-									<input type="hidden" value="${parentStatus.count }" name="target_day">
+									<input type="hidden" value="${parentStatus.count }"
+										name="target_day">
 								</form>
 							</td>
 					</c:forEach>
@@ -311,20 +332,20 @@
 						selectedMonth : null
 					},
 					methods : {
-						nextYear: function(){
-							this.selectedYear ++
+						nextYear : function() {
+							this.selectedYear++
 							this.changePage()
 						},
-						beforeYear: function(){
-							this.selectedYear --
+						beforeYear : function() {
+							this.selectedYear--
 							this.changePage()
 						},
-						nextMonth: function(){
-							this.selectedMonth ++
+						nextMonth : function() {
+							this.selectedMonth++
 							this.changePage()
 						},
-						beforeMonth: function(){
-							this.selectedMonth --
+						beforeMonth : function() {
+							this.selectedMonth--
 							this.changePage()
 						},
 						getPram : function(name, url) {
@@ -348,19 +369,22 @@
 									+ this.selectedMonth
 						},
 						setSelected : function() {
-							if (this.getPram('target_year') === '' || this.getPram('target_year') === null) {
+							if (this.getPram('target_year') === ''
+									|| this.getPram('target_year') === null) {
 								this.selectedYear = new Date().getFullYear() //プルダウンの初期値として現在年を指定
 							} else {
 								this.selectedYear = this.getPram('target_year')
 							}
-							if (this.getPram('target_month') === '' || this.getPram('target_month') === null) {
-								this.selectedMonth = new Date().getMonth()+1 //プルダウンの初期値として現在年を指定
+							if (this.getPram('target_month') === ''
+									|| this.getPram('target_month') === null) {
+								this.selectedMonth = new Date().getMonth() + 1 //プルダウンの初期値として現在年を指定
 							} else {
-								this.selectedMonth = this.getPram('target_month')
+								this.selectedMonth = this
+										.getPram('target_month')
 							}
 						}
 					},
-					created: function(){
+					created : function() {
 						this.setSelected()
 						this.url = new URL(location);
 					}

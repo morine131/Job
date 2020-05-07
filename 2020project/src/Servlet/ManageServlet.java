@@ -1,6 +1,7 @@
 package Servlet;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -47,6 +48,12 @@ public class ManageServlet extends HttpServlet {
 		ArrayList<String>user_name_list = userMap.get("user_name_list");
 		ArrayList<String>emp_id_list = userMap.get("emp_id_list");
 		ArrayList<String>user_type_list = userMap.get("user_type_list");
+
+		ArrayList<BigDecimal>start_latitude_list = new ArrayList<BigDecimal>();
+		ArrayList<BigDecimal>start_longitude_list = new ArrayList<BigDecimal>();
+		ArrayList<BigDecimal>finish_latitude_list = new ArrayList<BigDecimal>();
+		ArrayList<BigDecimal>finish_longitude_list = new ArrayList<BigDecimal>();
+
 
 		int targetYear = 0;
 		int targetMonth = 0;
@@ -136,6 +143,11 @@ public class ManageServlet extends HttpServlet {
 				ob.setWork_time(wb.getWork_time());
 				ob.setNote(wb.getNote());
 				ob.setReason(wb.getReason());
+
+				start_latitude_list.add(wb.getStart_latitude());
+				start_longitude_list.add(wb.getStart_longitude());
+				finish_latitude_list.add(wb.getFinish_latitude());
+				finish_longitude_list.add(wb.getFinish_longitude());
 				if(wb.getHoliday().equals("0")) {
 					ProcessedTime p_weekday_work_time = new ProcessedTime(wb.getWork_time().toString());
 					ProcessedTime p_weekday_standard_time = new ProcessedTime(wb.getStandard_time().toString());
@@ -159,10 +171,20 @@ public class ManageServlet extends HttpServlet {
 				ob.setDay(targetYear, targetMonth,i+1);
 				ob.setHoliday(targetYear,targetMonth,i+1);
 				ob.setStart_time(wb.getStart_time());
+
+				start_latitude_list.add(wb.getStart_latitude());
+				start_longitude_list.add(wb.getStart_longitude());
+				finish_latitude_list.add(wb.getFinish_latitude());
+				finish_longitude_list.add(wb.getFinish_longitude());
 			}else {
 				ob.setDate(i+1);
 				ob.setDay(targetYear, targetMonth,i+1);
 				ob.setHoliday(targetYear,targetMonth,i+1);
+
+				start_latitude_list.add(wb.getStart_latitude());
+				start_longitude_list.add(wb.getStart_longitude());
+				finish_latitude_list.add(wb.getFinish_latitude());
+				finish_longitude_list.add(wb.getFinish_longitude());
 			}
 			resultList.add(ob);
 			i++;
@@ -212,6 +234,11 @@ public class ManageServlet extends HttpServlet {
 		request.setAttribute("target_user_type", user_type);
 
 		request.setAttribute("yearList", yearList);
+
+		request.setAttribute("start_latitude_list", start_latitude_list);
+		request.setAttribute("start_longitude_list", start_longitude_list);
+		request.setAttribute("finish_latitude_list",finish_latitude_list);
+		request.setAttribute("finish_longitude_list", finish_longitude_list);
 
 		request.setAttribute("nameList", user_name_list);
 		RequestDispatcher rd = request.getRequestDispatcher("/manage.jsp");

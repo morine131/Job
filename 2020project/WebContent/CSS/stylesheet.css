@@ -1,68 +1,117 @@
 @charset "UTF-8";
+
 #sample {
- width: 700px;
-   height: 400px;
+	width: 700px;
+	height: 400px;
 }
-.login-form{
-	padding-top:30px;
+
+.login-form {
+	padding-top: 30px;
 }
-.inline-block{
-	display:inline-block;
+
+.inline-block {
+	display: inline-block;
 }
-.container{
-	text-align:center;
-	margin-top:50px;
+
+.container {
+	text-align: center;
+	margin-top: 50px;
 }
-.user-name{
-	font-size:20px;
-}
-.logout-btn{
-	display:inline-block;
-	padding-left:50px;
-}
-.home-btn{
-	display:inline-block;
-	padding-right:20px;
-}
-.yajirushi-btn{
-	height:25px;
-	width:25px;
-	display:inline-block;
+
+.user-name {
 	font-size: 20px;
 }
-.date{
-	font-size:28px;
-	margin-top:20px;
+
+.logout-btn {
+	display: inline-block;
+	padding-left: 50px;
 }
+
+.home-btn {
+	display: inline-block;
+	padding-right: 20px;
+}
+
+.yajirushi-btn {
+	height: 25px;
+	width: 25px;
+	display: inline-block;
+	font-size: 20px;
+}
+
+.right-btn {
+    width: 20px;
+    height: 20px;
+    border-style: solid;
+	border-width: 14px 0 14px 24.2px;
+	border-color: transparent transparent transparent #007bff;
+	display: inline-block;
+}
+.right-btn:hover {
+	cursor: pointer;
+	opacity: 0.5;
+}
+.left-btn {
+    width: 20px;
+    height: 20px;
+    border-style: solid;
+	border-width: 14px 24.2px 14px 0;
+    border-color: transparent #007bff transparent transparent;
+    display: inline-block;
+}
+
+.left-btn:hover {
+	cursor: pointer;
+	opacity: 0.5;
+}
+
+.date {
+	font-size: 28px;
+	margin-top: 20px;
+}
+
 .menu-btn {
-    width: 165px;
-    border: solid;
-    margin: 4px;
+	width: 165px;
+	border: solid;
+	border-color: #92D7E7;
+	margin: 4px;
 }
-.feel-table{
-	width:1000px;
+
+.feel-table {
+	width: 1000px;
 }
-.feel-table-name{
-	width:150px;
+
+.feel-table-name {
+	width: 150px;
 }
-.feel-table-gatunichisquares{
-	width:70px;
+
+.feel-table-gatunichisquares {
+	width: 70px;
 }
-.feel-table-daysquares{
-	width:27px;
+
+.feel-table-daysquares {
+	width: 27px;
 }
-.background-green{
-	background-color:#7fff7f;
+
+.background-green {
+	background-color: #7fff7f;
 }
-.background-yellow{
-	background-color:#ffff7f;
+
+.background-yellow {
+	background-color: #ffff7f;
 }
-.background-orange{
-	background-color:#ffc37f;
+
+.background-orange {
+	background-color: #ffc37f;
 }
-.background-red{
-	background-color:#ff7f7f;
+
+.background-red {
+	background-color: #ff7f7f;
 }
-.form-control{
-	width:8%;
+
+.form-control {
+	width: 60%;
+}
+.select-box{
+	width:180px;
 }

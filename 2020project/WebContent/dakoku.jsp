@@ -18,7 +18,7 @@
 			</span>
 
 			<form class="logout-btn" method="post" action="${pageContext.request.contextPath}/Logout">
-				<input class="btn btn-secondary" type="submit" value="ログアウト">
+				<input class="btn btn-sm btn-outline-secondary" type="submit" value="ログアウト">
 			</form>
 			<div class="date">{{ date }}</div>
 
