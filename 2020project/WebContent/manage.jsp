@@ -12,56 +12,36 @@
 </head>
 <body>
 	<div class="container" id="app">
-		<c:forEach items="${start_latitude_list}" var="map"
-			varStatus="parentStatus">
-			<input type="hidden" value="${ map }" class="start_latitude">
-		</c:forEach>
-		<c:forEach items="${start_longitude_list}" var="map"
-			varStatus="parentStatus">
-		${map }
-		</c:forEach>
-		<c:forEach items="${finish_latitude_list}" var="map"
-			varStatus="parentStatus">
-		${map }
-		</c:forEach>
-		<c:forEach items="${finish_longitude_list}" var="map"
-			varStatus="parentStatus">
-		${map }
-		</c:forEach>
 		<h2>勤務表管理</h2>
-		<form class="home-btn" method="get"
+		<form class="admin-home-btn" method="get"
 			action="${pageContext.request.contextPath}/Home">
 			<input class="btn" type="submit" value="戻る">
 		</form>
-		<span class="user-name">${ user_name} さん</span>
-		<form class="logout-btn" method="post"
-			action="${pageContext.request.contextPath}/Logout">
-			<input class="btn btn-secondary" type="submit" value="ログアウト">
-		</form>
 		<div>
 			<select name="example" v-model="selectedUser"
-				v-on:change="changePage" class="inline-block">
+				v-on:change="changePage" class="form-control width300 ">
 				<option value=''>ユーザーを選択してください</option>
 				<c:forEach items="${nameList}" var="map" varStatus="parentStatus">
 					<option>${map}</option>
 				</c:forEach>
 			</select>
 		</div>
-		<div>
-			<input class="yajirushi-btn" type="submit" value="＜"
-				v-on:click="beforeYear"> <select name="example"
-				v-model="selectedYear" v-on:change="changePage" class="inline-block">
+		<div class="width200">
+			<div>年を選択</div>
+			<div class="left-btn" v-on:click="beforeYear"></div>
+			<select name="example" v-model="selectedYear"
+				v-on:change="changePage" class="inline-block form-control">
 				<c:forEach items="${ yearList }" var="year">
 					<option>${year}</option>
 				</c:forEach>
-			</select> <input class="yajirushi-btn" type="submit" value="＞"
-				v-on:click="nextYear">
+			</select>
+			<div class="right-btn" v-on:click="nextYear"></div>
 		</div>
-		<div>
-			<input class="yajirushi-btn" type="submit" value="＜"
-				v-on:click="beforeMonth"> <select name="example"
-				v-model="selectedMonth" v-on:change="changePage"
-				class="inline-block">
+		<div class="width200">
+			<div>月を選択</div>
+			<div class="left-btn" v-on:click="beforeMonth"></div>
+			<select name="example" v-model="selectedMonth"
+				v-on:change="changePage" class="inline-block form-control">
 				<option>1</option>
 				<option>2</option>
 				<option>3</option>
@@ -74,8 +54,8 @@
 				<option>10</option>
 				<option>11</option>
 				<option>12</option>
-			</select> <input class="yajirushi-btn" type="submit" value="＞"
-				v-on:click="nextMonth">
+			</select>
+			<div class="right-btn" v-on:click="nextMonth"></div>
 		</div>
 		<div v-if="visible">
 			<c:if test="${target_user_type == '1'}">
@@ -228,201 +208,261 @@
 				</table>
 			</c:if>
 
-			<div id="sample"></div>
+
 		</div>
+		<div id="sample"></div>
 	</div>
+	<c:forEach items="${start_latitude_list}" var="map"
+		varStatus="parentStatus">
+		<input type="hidden" value="${ map }" class="start_latitude">
+	</c:forEach>
+	<c:forEach items="${start_longitude_list}" var="map"
+		varStatus="parentStatus">
+		<input type="hidden" value="${ map }" class="start_longitude">
+	</c:forEach>
+	<c:forEach items="${finish_latitude_list}" var="map"
+		varStatus="parentStatus">
+		<input type="hidden" value="${ map }" class="finish_latitude">
+	</c:forEach>
+	<c:forEach items="${finish_longitude_list}" var="map"
+		varStatus="parentStatus">
+		<input type="hidden" value="${ map }" class="finish_longitude">
+	</c:forEach>
 	<script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
 		async defer></script>
 	<script>
-		const targetYear = getParam("target_year")
-		const targetMonth = getParam("target_month")
-		const count_days = days(targetYear,targetMonth)
+			const targetYear = getParam("target_year")
+			const targetMonth = getParam("target_month")
+			const count_days = days(targetYear, targetMonth)
 
+			const start_latitude_list = document
+					.getElementsByClassName('start_latitude');
+			const start_longitude_list = document
+					.getElementsByClassName('start_longitude');
+			const finish_latitude_list = document
+					.getElementsByClassName('finish_latitude');
+			const finish_longitude_list = document
+					.getElementsByClassName('finish_longitude');
 
-		const start_latitude_list = document.getElementsByClassName('start_latitude');
-		const start_longitude_list = document.getElementsByClassName('start_longitude');
-		const finish_latitude_list = document.getElementsByClassName('finish_latitude');
-		const finish_longitude_list = document.getElementsByClassName('finish_longitude');
+			var start_la_list = []
+			var start_lo_list = []
+			var finish_la_list = []
+			var finish_lo_list = []
 
-		var start_la_list = []
-		var start_lo_list = []
-		var finish_la_list = []
-		var finish_lo_list = []
+			var start_day_list = []
+			var finish_day_list = []
 
-		var start_day_list = []
-		var finish_day_list = []
+			var markerData = [];
 
-		var markerData = [];
-
-		let count = 0
-		for (var i = 0; i < count_days; i++) {
-			const num = start_latitude_list[i].value
-			const num2 = start_longitude_list[i].value
-			console.log("num2" + num2)
-			if(num > 0  ){
-			const obj = {
-					name : i,
-				    lat : num,
-				    lng : num2
-				}
-				markerData.push(obj)
- 			}
-			if(finish_latitude_list[i].value > 0  ){
-				finish_la_list.push(finish_latitude_list[i].value)
-			}
-			if(finish_longitude_list[i].value > 0  ){
-				finish_lo_list.push(finish_longitude_list[i].value)
-			}
-		}
-
-
-		function days(year, month) {
-			return new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
-		}
-		//パラメーターで指定された値を取得するメソッド
-		function getParam(name, url) {
-							if (!url)
-								url = window.location.href;
-							name = name.replace(/[\[\]]/g, "\\$&");
-							var regex = new RegExp("[?&]" + name
-									+ "(=([^&#]*)|&|#|$)"), results = regex
-									.exec(url)
-							if (!results)
-								return null
-							if (!results[2])
-								return ''
-							return decodeURIComponent(results[2].replace(/\+/g,
-									" "))
-						}
-
-		var map;
-		var marker = [];
-		var infoWindow = [];
-
-
-		function initMap() {
-			// 地図の作成
-			var mapLatLng = new google.maps.LatLng({
-				lat : markerData[0]['lat'],
-				lng : markerData[0]['lng']
-			}); // 緯度経度のデータ作成
-			map = new google.maps.Map(document.getElementById('sample'), { // #sampleに地図を埋め込む
-				center : mapLatLng, // 地図の中心を指定
-				zoom : 15
-			// 地図のズームを指定
-			});
-
-			// マーカー毎の処理
-			for (var i = 0; i < markerData.length; i++) {
-				markerLatLng = new google.maps.LatLng({
-					lat : markerData[i]['lat'],
-					lng : markerData[i]['lng']
-				}); // 緯度経度のデータ作成
-				marker[i] = new google.maps.Marker({ // マーカーの追加
-					position : markerLatLng, // マーカーを立てる位置を指定
-					map : map
-				// マーカーを立てる地図を指定
-				});
-
-				infoWindow[i] = new google.maps.InfoWindow({ // 吹き出しの追加
-					content : '<div class="sample">' + markerData[i]['name']
-							+ '</div>' // 吹き出しに表示する内容
-				});
-
-				markerEvent(i); // マーカーにクリックイベントを追加
-			}
-		}
-
-		// マーカーにクリックイベントを追加
-		function markerEvent(i) {
-			marker[i].addListener('click', function() { // マーカーをクリックしたとき
-				infoWindow[i].open(map, marker[i]); // 吹き出しの表示
-			});
-
-
-		}
-		new Vue(
-				{
-					el : "#app",
-					data : {
-						selectedUser : null,
-						selectedYear : null,
-						selectedMonth : null,
-						visivle : false
-					},
-					methods : {
-						nextYear : function() {
-							this.selectedYear++
-							this.changePage()
-						},
-						beforeYear : function() {
-							this.selectedYear--
-							this.changePage()
-						},
-						nextMonth : function() {
-							this.selectedMonth++
-							this.changePage()
-						},
-						beforeMonth : function() {
-							this.selectedMonth--
-							this.changePage()
-						},
-						getPram : function(name, url) {
-							if (!url)
-								url = window.location.href;
-							name = name.replace(/[\[\]]/g, "\\$&");
-							var regex = new RegExp("[?&]" + name
-									+ "(=([^&#]*)|&|#|$)"), results = regex
-									.exec(url)
-							if (!results)
-								return null
-							if (!results[2])
-								return ''
-							return decodeURIComponent(results[2].replace(/\+/g,
-									" "))
-						},
-						changePage : function() {
-							if (this.selectedUser === '') {
-								return
-
-							}
-							window.location.href = '/2020project/Manage?target_year='
-									+ this.selectedYear
-									+ '&target_month='
-									+ this.selectedMonth
-									+ '&target_user='
-									+ this.selectedUser
-
-						},
-						setSelected : function() {
-							if (this.getPram('target_year') === ''
-									|| this.getPram('target_year') === null) {
-								this.selectedYear = new Date().getFullYear() //プルダウンの初期値として現在年を指定
-							} else {
-								this.selectedYear = this.getPram('target_year')
-							}
-							if (this.getPram('target_month') === ''
-									|| this.getPram('target_month') === null) {
-								this.selectedMonth = new Date().getMonth() + 1 //プルダウンの初期値として現在年を指定
-							} else {
-								this.selectedMonth = this
-										.getPram('target_month')
-							}
-							if (this.getPram('target_user') === ''
-									|| this.getPram('target_user') === null) {
-								this.selectedUser = '' //プルダウンの初期値は''
-							} else {
-								this.selectedUser = this.getPram('target_user')
-								this.visible = true
-							}
-						}
-					},
-					created : function() {
-						this.setSelected()
-						this.url = new URL(location);
+			let count = 0
+			for (var i = 0; i < count_days; i++) {
+				const num = start_latitude_list[i].value
+				const num2 = start_longitude_list[i].value
+				if (num > 0) {
+					const obj = {
+						name : targetMonth + "/" + (i + 1) + " 出勤",
+						lat : parseFloat(num),
+						lng : parseFloat(num2),
+						icon : './images/red_point.png'
 					}
+					markerData.push(obj)
+				}
+				const num3 = finish_latitude_list[i].value
+				const num4 = finish_longitude_list[i].value
+				if (num3 > 0) {
+					const obj = {
+						name : targetMonth + "/" + (i + 1) + " 退勤",
+						lat : parseFloat(num3),
+						lng : parseFloat(num4),
+						icon : './images/blue_point.png'
+					}
+					markerData.push(obj)
+				}
+			}
 
-				})
-	</script>
+			console.log(markerData)
+
+			function days(year, month) {
+				return new Date(parseInt(year, 10), parseInt(month, 10), 0)
+						.getDate();
+			}
+			//パラメーターで指定された値を取得するメソッド
+			function getParam(name, url) {
+				if (!url)
+					url = window.location.href;
+				name = name.replace(/[\[\]]/g, "\\$&");
+				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex
+						.exec(url)
+				if (!results)
+					return null
+				if (!results[2])
+					return ''
+				return decodeURIComponent(results[2].replace(/\+/g, " "))
+			}
+
+			var map;
+			var marker = [];
+			var infoWindow = [];
+
+			function initMap() {
+				// 地図の作成
+				var mapLatLng = new google.maps.LatLng({
+					lat : markerData[0]['lat'],
+					lng : markerData[0]['lng']
+				}); // 緯度経度のデータ作成
+				map = new google.maps.Map(document.getElementById('sample'), { // #sampleに地図を埋め込む
+					center : mapLatLng, // 地図の中心を指定
+					zoom : 15
+				// 地図のズームを指定
+				});
+
+				// マーカー毎の処理
+				for (var i = 0; i < markerData.length; i++) {
+					markerLatLng = new google.maps.LatLng({
+						lat : markerData[i]['lat'],
+						lng : markerData[i]['lng']
+					}); // 緯度経度のデータ作成
+					marker[i] = new google.maps.Marker({ // マーカーの追加
+						position : markerLatLng, // マーカーを立てる位置を指定
+						map : map,
+						icon : {
+							url : markerData[i]['icon']
+						// マーカーの画像を変更
+						}
+					// マーカーを立てる地図を指定
+					});
+
+					infoWindow[i] = new google.maps.InfoWindow({ // 吹き出しの追加
+						content : '<div class="sample">'
+								+ markerData[i]['name'] + '</div>' // 吹き出しに表示する内容
+					});
+
+					markerEvent(i); // マーカーにクリックイベントを追加
+				}
+			}
+
+			// マーカーにクリックイベントを追加
+			function markerEvent(i) {
+				marker[i].addListener('click', function() { // マーカーをクリックしたとき
+					infoWindow[i].open(map, marker[i]); // 吹き出しの表示
+				});
+
+			}
+			new Vue(
+					{
+						el : "#app",
+						data : {
+							selectedUser : null,
+							selectedYear : null,
+							selectedMonth : null,
+							visivle : false,
+						},
+						methods : {
+							nextYear : function() {
+								this.selectedYear++
+								this.changePage()
+							},
+							beforeYear : function() {
+								this.selectedYear--
+								this.changePage()
+							},
+							nextMonth : function() {
+								this.selectedMonth++
+								this.changePage()
+							},
+							beforeMonth : function() {
+								this.selectedMonth--
+								this.changePage()
+							},
+							getPram : function(name, url) {
+								if (!url)
+									url = window.location.href;
+								name = name.replace(/[\[\]]/g, "\\$&");
+								var regex = new RegExp("[?&]" + name
+										+ "(=([^&#]*)|&|#|$)"), results = regex
+										.exec(url)
+								if (!results)
+									return null
+								if (!results[2])
+									return ''
+								return decodeURIComponent(results[2].replace(
+										/\+/g, " "))
+							},
+							changePage : function() {
+								if (this.selectedUser === '') {
+									return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+								}
+								window.location.href = '/2020project/Manage?target_year='
+										+ this.selectedYear
+										+ '&target_month='
+										+ this.selectedMonth
+										+ '&target_user='
+										+ this.selectedUser
+
+							},
+							setSelected : function() {
+								if (this.getPram('target_year') === ''
+										|| this.getPram('target_year') === null) {
+									this.selectedYear = new Date()
+											.getFullYear() //プルダウンの初期値として現在年を指定
+								} else {
+									this.selectedYear = this
+											.getPram('target_year')
+								}
+								if (this.getPram('target_month') === ''
+										|| this.getPram('target_month') === null) {
+									this.selectedMonth = new Date().getMonth() + 1 //プルダウンの初期値として現在年を指定
+								} else {
+									this.selectedMonth = this
+											.getPram('target_month')
+								}
+								if (this.getPram('target_user') === ''
+										|| this.getPram('target_user') === null) {
+									this.selectedUser = '' //プルダウンの初期値は''
+								} else {
+									this.selectedUser = this
+											.getPram('target_user')
+									this.visible = true
+								}
+							}
+						},
+						created : function() {
+							this.setSelected()
+							this.url = new URL(location);
+						}
+
+					})
+		</script>
 </body>
 </html>

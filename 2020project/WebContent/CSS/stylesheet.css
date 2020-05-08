@@ -3,6 +3,9 @@
 #sample {
 	width: 700px;
 	height: 400px;
+	margin-top:30px;
+	margin-left:auto;
+	margin-right:auto;
 }
 
 .login-form {
@@ -17,6 +20,9 @@
 	text-align: center;
 	margin-top: 50px;
 }
+.menu-container{
+	text-align: center;
+}
 
 .user-name {
 	font-size: 20px;
@@ -24,12 +30,15 @@
 
 .logout-btn {
 	display: inline-block;
-	padding-left: 50px;
 }
 
 .home-btn {
 	display: inline-block;
 	padding-right: 20px;
+}
+.admin-home-btn {
+	display: inline-block;
+	padding-left: 100px;
 }
 
 .yajirushi-btn {
@@ -71,10 +80,15 @@
 }
 
 .menu-btn {
-	width: 165px;
-	border: solid;
-	border-color: #92D7E7;
-	margin: 4px;
+    width: 165px;
+    border: solid;
+    border-color: #92D7E7;
+    margin: 4px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius:6px;
 }
 
 .feel-table {
@@ -114,4 +128,17 @@
 }
 .select-box{
 	width:180px;
+}
+.width300 {
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+.width200{
+	width :200px;
+	margin-left:auto;
+	margin-right:auto;
+	display:inline-block;
 }

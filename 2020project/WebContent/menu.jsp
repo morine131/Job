@@ -12,13 +12,8 @@
 </head>
 <body>
 	<div class="container">
-		<h2>メニュー</h2>
-		<span class="user-name">${ user_name} さん</span>
-
-		<form class="logout-btn" method="post"
-			action="${pageContext.request.contextPath}/Logout">
-			<input class="btn btn-secondary" type="submit" value="ログアウト">
-		</form>
+		<h2>管理者メニュー</h2>
+		<div class="menu-container">
 		<form class="menu-btn" method="GET"
 			action="${pageContext.request.contextPath}/Manage">
 			<input class="btn" type="submit" value="勤務表管理">
@@ -35,6 +30,11 @@
 			action="${pageContext.request.contextPath}/UpdatePassword">
 			<input class="btn" type="submit" value="パスワード設定">
 		</form>
+				<form class="logout-btn" method="post"
+			action="${pageContext.request.contextPath}/Logout">
+			<input class="btn btn-sm btn-outline-secondary" type="submit" value="ログアウト">
+		</form>
+		</div>
 	</div>
 </body>
 </html>

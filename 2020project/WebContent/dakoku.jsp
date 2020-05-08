@@ -25,26 +25,26 @@
 			<form class="start-btn" method="post" action="${pageContext.request.contextPath}/Start">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn menu-btn" type="submit" value="出勤" <c:if test="${start_btn_flg == '1'}">disabled</c:if> >
+				<input class="btn menu-btn" type="submit" value="出勤" v-bind:disabled="startDisabled">
 			</form>
 			気分を選択して退勤
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="0" name="feeling">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn btn-success" type="submit" value="アイコン">
+				<input class="btn btn-success" type="submit" value="アイコン" v-bind:disabled="disabledGetPositon">
 			</form>
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="1" name="feeling">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn btn-warning" type="submit" value="アイコン">
+				<input class="btn btn-warning" type="submit" value="アイコン" v-bind:disabled="disabledGetPositon">
 			</form>
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="2" name="feeling">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn btn-danger" type="submit" value="アイコン">
+				<input class="btn btn-danger" type="submit" value="アイコン" v-bind:disabled="disabledGetPositon">
 			</form>
 			<form class="history_btn" method="GET" action="${pageContext.request.contextPath}/History">
 				<input class="btn menu-btn" type="submit" value="勤務表">
@@ -59,6 +59,7 @@
 				<input class="btn " type="submit" value="打刻テスト">
 			</form>
 			<input class="btn " type="button" value="位置情報取得" @click="getPosition()">
+			<input type="hidden" value="${start_btn_flg}" id="start_btn_flg">
 		</div>
 	</div>
 	<script>
@@ -66,17 +67,36 @@
 			el : "#app",
 			data : {
 				latitude: 0,
-				longitude: 0
+				longitude: 0,
+				isSmartPhpne : false,
+				startDisabled :false,
+				disabledGetPositon: false
 			},
 			methods : {
 				getPosition : function(){
-					navigator.geolocation.getCurrentPosition(this.successGetPosition);
-					console.log("getPosition")
+					navigator.geolocation.getCurrentPosition(this.successGetPosition,this.errorGetPosition);
 				},
 				successGetPosition : function(position){
 					this.latitude = position.coords.latitude
 					this.longitude = position.coords.longitude
-				}
+
+				},
+				errorGetPosition : function (argErr){
+					this.disabledGetPositon = true
+					this.startDisabled = true
+					 switch(argErr.code){
+			        case 1 :  alert ("位置情報の利用が許可されていません");break;
+			        case 2 : alert("デバイスの位置が判定できません");break;
+			        case 3 : alert("タイムアウトしました");break;
+			    }
+				},
+				judgeSmartPhone : function() {
+					  if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
+					    return true;
+					  } else {
+					    return false;
+					  }
+					}
 			},
 			computed : {
 				date : function() {
@@ -94,7 +114,16 @@
 				}
 			},
 			created : function(){
-				this.getPosition()
+				const start_btn_flg = document.getElementById("start_btn_flg").value
+
+				this.isSmartPhone = this.judgeSmartPhone()
+				if(this.isSmartPhone){
+					this.getPosition()
+				}
+
+				if(start_btn_flg === '1' ){
+					this.startDisabled = true
+				}
 			}
 		})
 	</script>
