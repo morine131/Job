@@ -310,6 +310,9 @@ public class WorkHistoryDAO extends DAO {
 		}
 		//通常勤務者の休日出勤
 		if(holiday.equals("1") && user_type.equals("1")) {
+
+			division = "休日出勤";
+
 			int restraintTime = 0;
 			//拘束時間を求める
 			if(finishTime>=startTime) {
@@ -402,7 +405,7 @@ public class WorkHistoryDAO extends DAO {
 
 		//フレックス勤務者の休日出勤
 		if(holiday.equals("1") && user_type.equals("2")) {
-			//休憩時間を求める
+			division = "休日出勤";
 
 			int restraintTime = 0;
 			//拘束時間を求める

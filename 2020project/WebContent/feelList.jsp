@@ -11,41 +11,47 @@
 </head>
 <body>
 	<div class="container" id="app">
-		<h2>気分一覧</h2>
-		<form class="home-btn" method="get"
-			action="${pageContext.request.contextPath}/Home">
-			<input class="btn" type="submit" value="戻る">
+		<div class="manage-top">
+		<form class="admin-home-btn" method="get" action="${pageContext.request.contextPath}/Home">
+			<input class="btn btn-sm btn-outline-secondary back-btn" type="submit" value="戻る">
 		</form>
-			<input class="yajirushi-btn" type="submit" value="＜" v-on:click="beforeYear">
-		<select name="example" v-model="selected" v-on:change="changePage" class="inline-block">
-			<option>2020</option>
-			<option>2021</option>
-		</select>
-			<input class="yajirushi-btn" type="submit" value="＞" v-on:click="nextYear">
+		<h2 class="inline-block">気分一覧</h2>
+		</div>
+		<div class="width200">
+			<div class="padding-top">年を選択</div>
+			<div class="left-btn" v-on:click="beforeYear"></div>
+			<select name="example" v-model="selected"
+				v-on:change="changePage" class="inline-block form-control">
+				<c:forEach items="${ yearList }" var="year">
+					<option>${year}</option>
+				</c:forEach>
+			</select>
+			<div class="right-btn" v-on:click="nextYear"></div>
+		</div>
 
 		<c:forEach items="${list}" var="map" varStatus="parentStatus">
-			<table class="feel-table table-bordered">
+			<table class="feel-table table-bordered table-hover">
 				<tbody>
 					<tr>
-						<td></td>
+						<td class="feel-table-name"></td>
 						<td class="feel-table-gatunichisquares">月＼日</td>
 						<c:forEach begin="1" end="31" step="1" varStatus="status">
-							<td><c:out value="${status.count}" /></td>
+							<td class="feel-table-daysquares"><c:out value="${status.count}" /></td>
 						</c:forEach>
 					</tr>
 					<tr>
-						<td rowspan="12" class="feel-table-name">${map.user_name}</td>
+						<td rowspan="12">${map.user_name}</td>
 						<td>1</td>
 						<c:forEach begin="0" end="30" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[0][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[0][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[0][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -55,13 +61,13 @@
 						<c:forEach begin="0" end="27" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[1][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[1][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[1][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -71,13 +77,13 @@
 						<c:forEach begin="0" end="30" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[2][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[2][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[2][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -87,13 +93,13 @@
 						<c:forEach begin="0" end="29" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[3][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[3][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[3][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -103,13 +109,13 @@
 						<c:forEach begin="0" end="30" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[4][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[4][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[4][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -119,13 +125,13 @@
 						<c:forEach begin="0" end="29" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[5][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[5][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[5][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -135,13 +141,13 @@
 						<c:forEach begin="0" end="30" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[6][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[6][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[6][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -151,13 +157,13 @@
 						<c:forEach begin="0" end="30" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[7][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[7][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[7][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -167,13 +173,13 @@
 						<c:forEach begin="0" end="29" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[8][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[8][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[8][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -183,13 +189,13 @@
 						<c:forEach begin="0" end="30" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[9][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[9][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[9][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -199,13 +205,13 @@
 						<c:forEach begin="0" end="29" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[10][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[10][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[10][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>
@@ -215,13 +221,13 @@
 						<c:forEach begin="0" end="30" step="1" varStatus="status">
 							<td
 								<c:if test="${list[parentStatus.index].feelYearList[11][status.index] == '0'}">
-								class="feel-table-daysquares background-green"
+								class=" background-green"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[11][status.index] == '1'}">
-								class="feel-table-daysquares background-yellow"
+								class=" background-yellow"
 							</c:if>
 								<c:if test="${list[parentStatus.index].feelYearList[11][status.index] == '2'}">
-								class="feel-table-daysquares background-red"
+								class=" background-red"
 							</c:if>>
 							</td>
 						</c:forEach>

@@ -10,6 +10,7 @@
 <title>打刻画面</title>
 </head>
 <body>
+<jsp:include page="nav.jsp" />
 	<div class="container" id="app">
 		<h2>インターソフト WEB勤務表</h2>
 		<div>
@@ -22,36 +23,51 @@
 			</form>
 			<div class="date">{{ date }}</div>
 
+			<div class="dakoku-step">
+			<div class="dakoku-menu-bar">
+			出勤
+			</div>
+			<div class="dakoku-menu-bar">
+			気分を選択して退勤
+			</div>
+			</div>
+			<div class="dakoku-step">
+			<div class="dakoku-menu">
 			<form class="start-btn" method="post" action="${pageContext.request.contextPath}/Start">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn menu-btn" type="submit" value="出勤" v-bind:disabled="startDisabled">
+				<input class="start-btn"  v-bind:class="classObject" type="submit" value="出勤" v-bind:disabled="startDisabled">
 			</form>
-			気分を選択して退勤
+			</div>
+			<div class="dakoku-menu">
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="0" name="feeling">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn btn-success" type="submit" value="アイコン" v-bind:disabled="disabledGetPositon">
+				<input class="good-finish-btn" type="submit" value="" v-bind:disabled="disabledGetPositon">
 			</form>
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="1" name="feeling">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn btn-warning" type="submit" value="アイコン" v-bind:disabled="disabledGetPositon">
+				<input class="normal-finish-btn" type="submit" value="" v-bind:disabled="disabledGetPositon">
 			</form>
 			<form class="finish-btn" method="post" action="${pageContext.request.contextPath}/Finish">
 				<input type="hidden" value="2" name="feeling">
 				<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
-				<input class="btn btn-danger" type="submit" value="アイコン" v-bind:disabled="disabledGetPositon">
+				<input class="bad-finish-btn" type="submit" value="" v-bind:disabled="disabledGetPositon">
 			</form>
-			<form class="history_btn" method="GET" action="${pageContext.request.contextPath}/History">
-				<input class="btn menu-btn" type="submit" value="勤務表">
+			</div>
+			</div>
+			<div class="dakoku-step">
+			<form class="history_btn dakoku-menu-bottom " method="GET" action="${pageContext.request.contextPath}/History">
+				<input class="btn  " type="submit" value="勤務表">
 			</form>
-			<form class="update-pass-btn" method="GET" action="${pageContext.request.contextPath}/UpdatePassword">
-				<input class="btn menu-btn" type="submit" value="パスワード設定">
+			<form class="update-pass-btn dakoku-menu-bottom" method="GET" action="${pageContext.request.contextPath}/UpdatePassword">
+				<input class="btn " type="submit" value="パスワード設定">
 			</form>
+			</div>
 			<br>
 			<!--  開発用のテストページ-->
 			開発用
@@ -111,6 +127,12 @@
 					const dayStr = year + "年" + mon + "月" + day + "日" + "("
 							+ youbi + ")";
 					return dayStr
+				},
+				classObject: function () {
+					    return {
+					    	'startBtn btn ': ! this.startDisabled,
+					    	'startiDisabled': this.startDisabled
+					    }
 				}
 			},
 			created : function(){

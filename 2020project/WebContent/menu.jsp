@@ -12,28 +12,35 @@
 </head>
 <body>
 	<div class="container">
-		<h2>管理者メニュー</h2>
+		<div class="manage-top">
+			<form class="logout-btn" method="post"
+				action="${pageContext.request.contextPath}/Logout">
+				<input class="btn btn-sm btn-outline-secondary back-btn"
+					type="submit" value="ログアウト">
+			</form>
+			<h2 class="inline-block">管理者メニュー</h2>
+		</div>
 		<div class="menu-container">
-		<form class="menu-btn" method="GET"
-			action="${pageContext.request.contextPath}/Manage">
-			<input class="btn" type="submit" value="勤務表管理">
-		</form>
-		<form class="menu-btn" method="GET"
-			action="${pageContext.request.contextPath}/FeelList">
-			<input class="btn" type="submit" value="気分一覧">
-		</form>
-		<form class="menu-btn" method="GET"
-			action="${pageContext.request.contextPath}/OverTimeWorkList">
-			<input class="btn" type="submit" value="残業一覧">
-		</form>
-		<form class="menu-btn" method="GET"
-			action="${pageContext.request.contextPath}/UpdatePassword">
-			<input class="btn" type="submit" value="パスワード設定">
-		</form>
-				<form class="logout-btn" method="post"
-			action="${pageContext.request.contextPath}/Logout">
-			<input class="btn btn-sm btn-outline-secondary" type="submit" value="ログアウト">
-		</form>
+			<div class="menu-step">
+				<form class="menu-btn" method="GET"
+					action="${pageContext.request.contextPath}/Manage">
+					<input class="btn" type="submit" value="勤務表管理">
+				</form>
+				<form class="menu-btn" method="GET"
+					action="${pageContext.request.contextPath}/FeelList">
+					<input class="btn" type="submit" value="気分一覧">
+				</form>
+			</div>
+			<div class="menu-step">
+				<form class="menu-btn" method="GET"
+					action="${pageContext.request.contextPath}/OverTimeWorkList">
+					<input  class="btn" type="submit" value="残業一覧">
+				</form>
+				<form class="menu-btn" method="GET"
+					action="${pageContext.request.contextPath}/UpdatePassword">
+					<input class="btn" type="submit" value="パスワード設定">
+				</form>
+			</div>
 		</div>
 	</div>
 </body>

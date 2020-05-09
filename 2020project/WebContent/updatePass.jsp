@@ -11,29 +11,28 @@
 </head>
 <body>
 	<div class="container" id="app">
-		<h2>パスワード修正</h2>
+				<div class="manage-top">
+		<form class="admin-home-btn" method="get" action="${pageContext.request.contextPath}/Home">
+			<input class="btn btn-sm btn-outline-secondary back-btn" type="submit" value="戻る">
+		</form>
+		<h2 class="inline-block">パスワード修正</h2>
+		</div>
 		<div>
 			<span class="user-name">社員名： ${ user_name} さん</span>
-			<form class="logout-btn" method="post"
-				action="${pageContext.request.contextPath}/Logout">
-				<input class="btn btn-secondary" type="submit" value="ログアウト">
-			</form>
 		</div>
 		<form class="newPass" method="post"
 			action="${pageContext.request.contextPath}/UpdatePassword">
 			<p>
-				新しいパスワード ※半角英数字8文字以上 <input type="password" id="pass" name="newPass"required>
+				 <input type="password" id="pass" name="newPass"required placeholder="新しいパスワード" class="newpass">
+			<br><span class="pass-message">※半角英数字8文字以上</span>
+			</p>
+
+			<p>
+				 <input type="password" id="confirm" required placeholder="パスワードの確認">
 			</p>
 			<p>
-				パスワードの確認 <input type="password" id="confirm" required>
+				<input class="btn btn-primary" type="submit" value="修正する" onclick="return passCheck()">
 			</p>
-			<p>
-				<input class="btn" type="submit" value="修正する" onclick="return passCheck()">
-			</p>
-		</form>
-		<form class="start-btn" method="get"
-			action="${pageContext.request.contextPath}/Home">
-			<input class="btn" type="submit" value="戻る">
 		</form>
 	</div>
 	<script type="text/javascript">

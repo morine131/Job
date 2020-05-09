@@ -62,6 +62,15 @@ public class OverTimeWorkListServlet extends HttpServlet {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
+
+		//jspのselectで表示する年のリストを取得する
+		ArrayList<Integer>yearList = new ArrayList<Integer>();
+		try (WorkHistoryDAO wd = new WorkHistoryDAO()){
+			yearList = wd.getYearList();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+		request.setAttribute("yearList", yearList);
 		request.setAttribute("map", map);
 		request.setAttribute("user_list", user_list);
 		RequestDispatcher rd = request.getRequestDispatcher("/overTimeWorkList.jsp");

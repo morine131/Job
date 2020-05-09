@@ -11,30 +11,28 @@
 </head>
 <body>
 	<div class="container" id="app">
-		<h2>残業一覧</h2>
-		<form class="home-btn" method="get"
-			action="${pageContext.request.contextPath}/Home">
-			<input class="btn" type="submit" value="戻る">
+		<div class="manage-top">
+		<form class="admin-home-btn" method="get" action="${pageContext.request.contextPath}/Home">
+			<input class="btn btn-sm btn-outline-secondary back-btn" type="submit" value="戻る">
 		</form>
-		<span class="user-name">${ user_name} さん</span>
-
-		<form class="logout-btn" method="post"
-			action="${pageContext.request.contextPath}/Logout">
-			<input class="btn btn-secondary" type="submit" value="ログアウト">
-		</form>
-		<div>
-		<input class="yajirushi-btn" type="submit" value="＜" v-on:click="beforeYear">
-		<select name="example" v-model="selected" v-on:change="changePage" class="inline-block">
-			<option>2020</option>
-			<option>2021</option>
-		</select>
-			<input class="yajirushi-btn" type="submit" value="＞" v-on:click="nextYear">
+		<h2 class="inline-block">残業一覧</h2>
+		</div>
+		<div class="width200">
+			<div class="padding-top">年を選択</div>
+			<div class="left-btn" v-on:click="beforeYear"></div>
+			<select name="example" v-model="selected"
+				v-on:change="changePage" class="inline-block form-control">
+				<c:forEach items="${ yearList }" var="year">
+					<option>${year}</option>
+				</c:forEach>
+			</select>
+			<div class="right-btn" v-on:click="nextYear"></div>
 		</div>
 		<div>
-			<table class="feel-table table-bordered">
+			<table class="feel-table table-bordered table-hover">
 				<tbody>
 					<tr>
-						<td></td>
+						<td class="over-table-name"></td>
 						<td>1月</td>
 						<td>2月</td>
 						<td>3月</td>
