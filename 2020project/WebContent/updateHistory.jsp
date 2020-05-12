@@ -10,130 +10,141 @@
 <title>勤務表修正画面</title>
 </head>
 <body>
+<jsp:include page="nav.jsp" />
 	<div class="container" id="app">
-		{{feeling}} ${ob.start_latitude }
+	<input type="hidden" id="getFeel" value="${ ob.feeling }">
 		<h2>勤務表修正</h2>
-		<div>
-			<span class="user-name">社員名： ${ user_name} さん</span>
-			<form class="logout-btn" method="post"
-				action="${pageContext.request.contextPath}/Logout">
-				<input class="btn btn-secondary" type="submit" value="ログアウト">
-			</form>
+		<div class="target-date">
+			対象日:{{target_year}}年{{target_month}}月{{ target_day }}日 ${ob.day}曜日
+		</div>
+		<div class="auto-btn">
+		<input type="radio" name="auto_or_manual" value="auto"
+			v-model="picked"> 出勤打刻と退勤打刻を元に自動計算　　　　　<input
+			type="radio" name="auto_or_manual" value="manual" v-model="picked"> 全ての項目を入力
 		</div>
 		<c:if test="${user_type == '1'}">
-			<table class="update_history table-bordered table-hover">
+		<table class="update-table table-bordered table-hover">
 				<tbody>
 					<tr>
-						<th>日付</th>
-						<th>曜日</th>
-						<th>勤務区分</th>
-						<th>出社時刻</th>
-						<th>退社時刻</th>
-						<th>退勤時の気分</th>
-						<th>休憩時間</th>
-						<th>基本時間</th>
-						<th>超過・不足</th>
-						<th>通常残業時間</th>
-						<th>深夜残業時間</th>
-						<th>作業時間</th>
-						<th>備考</th>
+						<th class="update-table-division">勤務区分</th>
+						<th class="update-table-start">出社時刻</th>
+						<th class="update-table-finish">退社時刻</th>
+						<th class="update-table-feel">退勤時の気分</th>
 					</tr>
 					<tr>
-						<td>{{target_month}}/{{ target_day }}</td>
-						<td>${ob.day}</td>
-						<td><input name="division" type="text"
+						<td><input name="division" type="text" class="form-control" pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"
 							value="${ob.division }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="start_time" type="text"
+						<td><input name="start_time" type="text" class="form-control" required pattern="\d{2}:\d{2}:\d{2}" title="HH:MM:SSの形式で入力してください"
 							value="${ ob.start_time }" form="form"></td>
-						<td><input name="finish_time" type="text"
+						<td><input name="finish_time" type="text" class="form-control" required pattern="\d{2}:\d{2}:\d{2}" title="HH:MM:SSの形式で入力してください"
 							value="${ ob.finish_time }" form="form"></td>
-						<td><select name="feeling" v-model="feeling" form="form">
+						<td><select name="feeling" v-model="feeling" form="form" class="form-control update-table-feel" required>
 								<option value="0">良好</option>
 								<option value="1">普通</option>
 								<option value="2">イマイチ</option>
 						</select></td>
-						<td><input name="break_time" type="text"
+				</tbody>
+			</table>
+			<table class="update-table table-bordered table-hover">
+				<tbody>
+					<tr>
+						<th>休憩時間</th>
+						<th>作業時間</th>
+						<th >超過・不足</th>
+					</tr>
+					<tr>
+						<td><input name="break_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
 							value="${ ob.break_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="standard_time" type="text"
-							value="${ ob.standard_time }" v-bind:disabled="isAuto"
-							form="form"></td>
-						<td><input name="much_or_little" type="text"
+						<td><input name="work_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+							value="${ ob.work_time }" v-bind:disabled="isAuto" form="form"></td>
+						<td><input name="much_or_little" type="text" class=" form-control update-table-much-f" required  pattern="^[1-9]\d*:[30]0|0:[30]0|-[1-9]\d*:[30]0" title="H:MM or -H:MMの形式で入力してください"
 							value="${ ob.much_or_little }" v-bind:disabled="isAuto"
 							form="form"></td>
-						<td><input name="over_time" type="text"
+				</tbody>
+			</table>
+			<table class="update-table table-bordered table-hover">
+				<tbody>
+					<tr>
+						<th>基本時間</th>
+						<th>通常残業時間</th>
+						<th >深夜残業時間</th>
+					</tr>
+					<tr>
+						<td><input name="standard_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+							value="${ ob.standard_time }" v-bind:disabled="isAuto" form="form"></td>
+						<td><input name="over_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
 							value="${ ob.over_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="late_over_time" type="text"
+						<td><input name="late_over_time" type="text" class=" form-control update-table-much-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
 							value="${ ob.late_over_time }" v-bind:disabled="isAuto"
 							form="form"></td>
-						<td><input name="work_time" type="text"
-							value="${ ob.work_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="note" type="text" value="${ ob.note }"
-							form="form"></td>
 				</tbody>
 			</table>
-			<br>
-		</c:if>
-		<c:if test="${user_type == '2'}">
-			<table class="feel-table table-bordered table-hover">
+			<table class="update-table table-bordered table-hover">
 				<tbody>
 					<tr>
-						<th>休日</th>
-						<th>日付</th>
-						<th>曜日</th>
-						<th>勤務区分</th>
-						<th>出社時刻</th>
-						<th>退社時刻</th>
-						<th>退勤時の気分</th>
-						<th>休憩時間</th>
-						<th>作業時間</th>
-						<th>超過・不足</th>
-						<th>備考</th>
+						<th class="update-table-note-f">備考</th>
+						<th class="update-table-note-f">修正理由</th>
 					</tr>
 					<tr>
-						<td>
-							<c:if test="${ob.holiday == '0'}">
-								<input type="button">
-							</c:if>
-							<c:if test="${ob.holiday == '1'}">
-								<input type="button" class="background-red">
-							</c:if>
-							<c:if test="${ob.holiday == '2'}">
-								<input type="button">
-							</c:if>
-						</td>
-						<td>{{target_month}}/{{ target_day }}</td>
-						<td>${ob.day}</td>
-						<td><input name="division" type="text"
+						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
+						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
+				</tbody>
+			</table>
+		</c:if>
+		<c:if test="${user_type == '2'}">
+			<table class="update-table table-bordered table-hover">
+				<tbody>
+					<tr>
+						<th class="update-table-division">勤務区分</th>
+						<th class="update-table-start">出社時刻</th>
+						<th class="update-table-finish">退社時刻</th>
+						<th class="update-table-feel">退勤時の気分</th>
+					</tr>
+					<tr>
+						<td><input name="division" type="text" class="form-control" required pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"
 							value="${ob.division }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="start_time" type="text"
+						<td><input name="start_time" type="text" class="form-control" required
 							value="${ ob.start_time }" form="form"></td>
-						<td><input name="finish_time" type="text"
+						<td><input name="finish_time" type="text" class="form-control" required
 							value="${ ob.finish_time }" form="form"></td>
-						<td><select name="feeling" v-model="feeling" form="form">
+						<td><select name="feeling" v-model="feeling" form="form" class="form-control update-table-feel" required>
 								<option value="0">良好</option>
 								<option value="1">普通</option>
 								<option value="2">イマイチ</option>
 						</select></td>
-						<td><input name="break_time" type="text"
+				</tbody>
+			</table>
+			<table class="update-table table-bordered table-hover">
+				<tbody>
+					<tr>
+						<th>休憩時間</th>
+						<th>作業時間</th>
+						<th >超過・不足</th>
+					</tr>
+					<tr>
+						<td><input name="break_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
 							value="${ ob.break_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="work_time" type="text"
+						<td><input name="work_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
 							value="${ ob.work_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="much_or_little" type="text"
+						<td><input name="much_or_little" type="text" class=" form-control update-table-much-f" required pattern="^[1-9]\d*:[30]0|0:[30]0|-[1-9]\d*:[30]0" title="H:MM or -H:MMの形式で入力してください"
 							value="${ ob.much_or_little }" v-bind:disabled="isAuto"
-							form="form"></td>
-						<td><input name="note" type="text" value="${ ob.note }"
 							form="form"></td>
 				</tbody>
 			</table>
+			<table class="update-table table-bordered table-hover">
+				<tbody>
+					<tr>
+						<th class="update-table-note-f">備考</th>
+						<th class="update-table-note-f">修正理由</th>
+					</tr>
+					<tr>
+						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" required pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
+						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
+				</tbody>
+			</table>
 		</c:if>
-		<input type="radio" name="auto_or_manual" value="auto"
-			v-model="picked">出勤打刻と退勤打刻のみ入力し、自動計算する<br> <input
-			type="radio" name="auto_or_manual" value="manual" v-model="picked">全ての項目を手入力する
 		<br>
-		<div>
-			修正理由： <input type="text" name="reason" form="form">
-		</div>
-		<form class="start-btn" method="POST" id="form"
+		<form class="under-btn" method="POST" id="form"
 			action="${pageContext.request.contextPath}/UpdateHistory">
 			<input type="hidden" value="${flag}" name="flag"> <input
 				type="hidden" :value="target_year" name="target_year"> <input
@@ -153,14 +164,15 @@
 				value="${ob.start_longitude }" name="start_longitude"> <input
 				type="hidden" value="${ob.finish_longitude }"
 				name="finish_longitude"> <input type="hidden"
-				:value="picked" name="isAuto"> <input class="btn"
+				:value="picked" name="isAuto"> <input class="btn btn-primary"
 				type="submit" value="修正する">
 		</form>
-		<form class="start-btn" method="get"
-			action="${pageContext.request.contextPath}/Home">
-			<input class="btn" type="submit" value="戻る">
+		<form class="under-btn" method="get"
+			action="${pageContext.request.contextPath}/History">
+			<input type="hidden" name="target_year" value="${target_year }">
+			<input type="hidden" name="target_month" value="${target_month }">
+			<input class="btn btn-secondary" type="submit" value="戻る">
 		</form>
-		<input type="hidden" id="getFeel" value="${ ob.feeling }">
 
 	</div>
 	<script>

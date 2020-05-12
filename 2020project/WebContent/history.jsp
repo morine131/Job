@@ -10,25 +10,26 @@
 <title>勤務表画面</title>
 </head>
 <body>
+<jsp:include page="nav.jsp" />
 	<div class="container" id="app">
 		<h2>勤務表</h2>
-		<div>
-		<form class="home-btn" method="get"
-			action="${pageContext.request.contextPath}/Home">
-			<input class="btn" type="submit" value="戻る">
-		</form>
-		<span class="user-name">${ user_name} さん</span>
-		<form class="logout-btn" method="post"
-			action="${pageContext.request.contextPath}/Logout">
-			<input class="btn btn-secondary" type="submit" value="ログアウト">
-		</form>
-		</div>
+		<div class="history-top">
+		<table class="table-bordered paid">
+			<tbody>
+				<tr>
+					<th>有給残日数</th>
+				</tr>
+				<tr>
+					<td>${ paid_vacations}日</td>
+				</tr>
+			</tbody>
+		</table>
 		<div class="inline-block select-box">
-			<div>年を選択</div>
+			<div>　　　年を選択</div>
 			<div>
 				<div class="left-btn" v-on:click="beforeYear"></div>
 				<select name="example" v-model="selectedYear"
-					v-on:change="changePage" class="inline-block form-control">
+					v-on:change="changePage" class="inline-block form-control history-select">
 					<option>2020</option>
 					<option>2021</option>
 				</select>
@@ -36,11 +37,11 @@
 			</div>
 		</div>
 		<div class="inline-block select-box">
-			<div>月を選択</div>
+			<div>　　　月を選択</div>
 			<div>
 				<div class="left-btn" v-on:click="beforeMonth"></div>
 				<select name="example" v-model="selectedMonth"
-					v-on:change="changePage" class="inline-block form-control">
+					v-on:change="changePage" class="inline-block form-control history-select">
 					<option>1</option>
 					<option>2</option>
 					<option>3</option>
@@ -57,6 +58,7 @@
 				<div class="right-btn" v-on:click="nextMonth"></div>
 			</div>
 		</div>
+		</div>
 		<h4>
 			<font color="red">${confirm_message} </font>
 			<%
@@ -67,27 +69,27 @@
 			<table class="feel-table table-bordered table-hover">
 				<tbody>
 					<tr>
-						<th>休日</th>
-						<th>日付</th>
-						<th>曜日</th>
-						<th>勤務区分</th>
-						<th>出社時刻</th>
-						<th>退社時刻</th>
-						<th>休憩時間</th>
-						<th>基本時間</th>
-						<th>超過・不足</th>
-						<th>通常残業時間</th>
-						<th>深夜残業時間</th>
-						<th>作業時間</th>
+						<th class="table-holiday31">休日</th>
+						<th class="table-date">日付</th>
+						<th class="table-day">曜日</th>
+						<th class="table-division">勤務区分</th>
+						<th class="table-start">出社時刻</th>
+						<th class="table-finish">退社時刻</th>
+						<th class="table-break">休憩時間</th>
+						<th class="table-standard">基本時間</th>
+						<th class="table-much">超過・不足</th>
+						<th class="table-over">通常残業時間</th>
+						<th class="table-late">深夜残業時間</th>
+						<th class="table-over">作業時間</th>
 
-						<th>備考</th>
+						<th class="table-note">備考</th>
 						<th>修正</th>
 					</tr>
 					<c:forEach items="${list}" var="map" varStatus="parentStatus">
 						<tr>
 							<td>
 								<form method="POST"
-									action="${pageContext.request.contextPath}/ChangeHoliday">
+									action="${pageContext.request.contextPath}/ChangeHoliday" class="change-holiday">
 									<input type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
 									<input type="hidden" value="${parentStatus.count }"
@@ -113,19 +115,20 @@
 										name="finish_latitude"> <input type="hidden"
 										value="${map.finish_longitude }" name="finish_longitude">
 									<input type="hidden" value="${map.date }" name="date">
+									<input type="hidden" value="${map.feeling }" name="feeling">
 									<input type="hidden" value="${map.notExist }" name="notExist">
 
 									<c:if test="${map.holiday == '0'}">
 										<input type="hidden" value="平日" name="status">
-										<input type="submit" value="">
+										<input type="submit" value="" class="table-holiday-btn">
 									</c:if>
 									<c:if test="${map.holiday == '1'}">
 										<input type="hidden" value="休日" name="status">
-										<input type="submit" class="background-red" value="">
+										<input type="submit" class="table-holiday-btn-red" value="" <c:if test="${map.day == '土' || map.day=='日'}">disabled</c:if>>
 									</c:if>
 									<c:if test="${map.holiday == '2'}">
 										<input type="hidden" value="有給" name="status">
-										<input type="submit" class="background-red" value="有">
+										<input type="submit" class="table-holiday-btn-red" value="有">
 									</c:if>
 								</form>
 							</td>
@@ -133,7 +136,15 @@
 							<td>${map.day}</td>
 							<td>${map.division}</td>
 							<td>${ map.start_time}</td>
-							<td>${map.finish_time}</td>
+							<td <c:if test="${map.feeling == '0'}">
+								class=" background-green"
+							</c:if>
+								<c:if test="${map.feeling == '1'}">
+								class=" background-yellow"
+							</c:if>
+								<c:if test="${map.feeling == '2'}">
+								class=" background-red"
+							</c:if>>${map.finish_time}</td>
 							<td>${map.break_time}</td>
 							<td>${map.standard_time }</td>
 							<td>${map.much_or_little }</td>
@@ -142,9 +153,9 @@
 							<td>${map.work_time }</td>
 							<td>${map.note }</td>
 							<td>
-								<form class="home-btn" method="get"
+								<form  method="get"
 									action="${pageContext.request.contextPath}/UpdateHistory">
-									<input class="btn" type="submit" value="btn"> <input
+									<input class="btn-square-pop" type="submit" value=""> <input
 										type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
 									<input type="hidden" value="${parentStatus.count }"
@@ -198,23 +209,23 @@
 			<table class="feel-table table-bordered table-hover">
 				<tbody>
 					<tr>
-						<th>休日</th>
-						<th>日付</th>
-						<th>曜日</th>
-						<th>勤務区分</th>
-						<th>出社時刻</th>
-						<th>退社時刻</th>
-						<th>休憩時間</th>
-						<th>作業時間</th>
-						<th>超過・不足</th>
-						<th>備考</th>
-						<th>修正</th>
+						<th class="table-holiday">休日</th>
+						<th class="table-date">日付</th>
+						<th class="table-day">曜日</th>
+						<th class="table-division">勤務区分</th>
+						<th class="table-start">出社時刻</th>
+						<th class="table-finish">退社時刻</th>
+						<th class="table-break-f">休憩時間</th>
+						<th class="table-work-f">作業時間</th>
+						<th class="table-much-f">超過・不足</th>
+						<th class="table-note">備考</th>
+						<th class="table-update">修正</th>
 					</tr>
 					<c:forEach items="${list}" var="map" varStatus="parentStatus">
 						<tr>
 							<td>
 								<form method="POST"
-									action="${pageContext.request.contextPath}/ChangeHoliday">
+									action="${pageContext.request.contextPath}/ChangeHoliday" class="change-holiday">
 									<input type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
 									<input type="hidden" value="${parentStatus.count }"
@@ -240,19 +251,20 @@
 										name="finish_latitude"> <input type="hidden"
 										value="${map.finish_longitude }" name="finish_longitude">
 									<input type="hidden" value="${map.date }" name="date">
+									<input type="hidden" value="${map.feeling }" name="feeling">
 									<input type="hidden" value="${map.notExist }" name="notExist">
 
 									<c:if test="${map.holiday == '0'}">
 										<input type="hidden" value="平日" name="status">
-										<input type="submit" value="">
+										<input type="submit" value="" class="table-holiday-btn">
 									</c:if>
 									<c:if test="${map.holiday == '1'}">
 										<input type="hidden" value="休日" name="status">
-										<input type="submit" class="background-red" value="">
+										<input type="submit" class="table-holiday-btn-red" value="" <c:if test="${map.day == '土' || map.day=='日'}">disabled</c:if>>
 									</c:if>
 									<c:if test="${map.holiday == '2'}">
 										<input type="hidden" value="有給" name="status">
-										<input type="submit" class="background-red" value="有">
+										<input type="submit" class="table-holiday-btn-red" value="有">
 									</c:if>
 								</form>
 							</td>
@@ -260,19 +272,29 @@
 							<td>${map.day}</td>
 							<td>${map.division}</td>
 							<td>${ map.start_time}</td>
-							<td>${map.finish_time}</td>
+							<td  <c:if test="${map.feeling == '0'}">
+								class=" background-green"
+							</c:if>
+								<c:if test="${map.feeling == '1'}">
+								class=" background-yellow"
+							</c:if>
+								<c:if test="${map.feeling == '2'}">
+								class=" background-red"
+							</c:if>>${map.finish_time}</td>
 							<td>${map.break_time}</td>
 							<td>${map.work_time }</td>
 							<td>${map.much_or_little }</td>
 							<td>${map.note }</td>
 							<td>
-								<form class="home-btn" method="get"
+								<form  method="get"
 									action="${pageContext.request.contextPath}/UpdateHistory">
-									<input class="btn" type="submit" value="btn"> <input
+									<input class="btn-square-pop" type="submit" value=""> <input
 										type="hidden" :value="selectedYear" name="target_year">
 									<input type="hidden" :value="selectedMonth" name="target_month">
 									<input type="hidden" value="${parentStatus.count }"
 										name="target_day">
+									<input type="hidden"
+										value="${map.day }" name="day">
 								</form>
 							</td>
 					</c:forEach>
@@ -280,7 +302,6 @@
 				</tbody>
 			</table>
 			<br>
-
 		平日合計
 		<table class="feel-table table-bordered table-hover">
 				<tbody>
@@ -311,16 +332,6 @@
 				</tbody>
 			</table>
 		</c:if>
-		<table>
-			<tbody>
-				<tr>
-					<th>有給残日数</th>
-				</tr>
-				<tr>
-					<td>${ paid_vacations}日</td>
-				</tr>
-			</tbody>
-		</table>
 	</div>
 	<script>
 		new Vue(

@@ -21,7 +21,7 @@
 			<div class="padding-top">年を選択</div>
 			<div class="left-btn" v-on:click="beforeYear"></div>
 			<select name="example" v-model="selected"
-				v-on:change="changePage" class="inline-block form-control">
+				v-on:change="changePage" class="inline-block form-control history-select">
 				<c:forEach items="${ yearList }" var="year">
 					<option>${year}</option>
 				</c:forEach>

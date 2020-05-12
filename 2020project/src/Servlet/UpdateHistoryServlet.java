@@ -70,6 +70,9 @@ public class UpdateHistoryServlet extends HttpServlet {
 		request.setAttribute("flag", flag);
 		request.setAttribute("ob", ob);
 
+		request.setAttribute("target_year", targetYear);
+		request.setAttribute("target_month", targetMonth);
+
 		RequestDispatcher rd = request.getRequestDispatcher("/updateHistory.jsp");
 		rd.forward(request, response);
 
@@ -81,6 +84,7 @@ public class UpdateHistoryServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//doGet(request, response);
+		System.out.println("postが発生");
 
 		// 文字コード設定
 		request.setCharacterEncoding("UTF-8");
@@ -121,6 +125,7 @@ public class UpdateHistoryServlet extends HttpServlet {
 		Time over_time = null;
 		Time late_over_time = null;
 		Time work_time = null;
+
 
 		if(! isAuto) {
 			break_time = convertSQLTime(request.getParameter("break_time"));

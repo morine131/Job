@@ -32,7 +32,7 @@
 			<div>年を選択</div>
 			<div class="left-btn" v-on:click="beforeYear"></div>
 			<select name="example" v-model="selectedYear"
-				v-on:change="changePage" class="inline-block form-control">
+				v-on:change="changePage" class="inline-block form-control history-select">
 				<c:forEach items="${ yearList }" var="year">
 					<option>${year}</option>
 				</c:forEach>
@@ -43,7 +43,7 @@
 			<div>月を選択</div>
 			<div class="left-btn" v-on:click="beforeMonth"></div>
 			<select name="example" v-model="selectedMonth"
-				v-on:change="changePage" class="inline-block form-control">
+				v-on:change="changePage" class="inline-block form-control history-select">
 				<option>1</option>
 				<option>2</option>
 				<option>3</option>

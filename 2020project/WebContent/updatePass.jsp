@@ -10,8 +10,9 @@
 <title>パスワード修正画面</title>
 </head>
 <body>
+		<c:if test="${ user_type == '1' || user_type == '2' }"><jsp:include page="nav.jsp" /></c:if>
 	<div class="container" id="app">
-				<div class="manage-top">
+		<div class="manage-top">
 		<form class="admin-home-btn" method="get" action="${pageContext.request.contextPath}/Home">
 			<input class="btn btn-sm btn-outline-secondary back-btn" type="submit" value="戻る">
 		</form>
@@ -23,7 +24,7 @@
 		<form class="newPass" method="post"
 			action="${pageContext.request.contextPath}/UpdatePassword">
 			<p>
-				 <input type="password" id="pass" name="newPass"required placeholder="新しいパスワード" class="newpass">
+				 <input type="password" id="pass" name="newPass" required placeholder="新しいパスワード" class="newpass">
 			<br><span class="pass-message">※半角英数字8文字以上</span>
 			</p>
 

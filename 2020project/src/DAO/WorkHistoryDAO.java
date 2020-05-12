@@ -66,6 +66,57 @@ public class WorkHistoryDAO extends DAO {
 		}
 	}
 
+	public void workStart(String emp_id,Date date,Time time,String holiday,BigDecimal latitude,BigDecimal longitude ,String exist , String reason) throws Exception{
+
+		if(exist.equals("0")) {
+			String sql = "INSERT INTO work_history (emp_id, DATE, start_time,holiday,start_latitude,start_longitude,reason) VALUES (?, ?, ? , ?,?,?,?);";
+
+			// SQLを実行してその結果を取得し、実行SQLを渡す
+			try {
+				// プリペアステーメントを取得し、実行SQLを渡す
+				PreparedStatement statement = getPreparedStatement(sql);
+				statement.setString(1, emp_id);
+				statement.setDate(2,date);
+				statement.setTime(3, time);
+				statement.setString(4,holiday);
+				statement.setBigDecimal(5, latitude);
+				statement.setBigDecimal(6, longitude);
+				statement.setString(7,reason);
+
+				statement.executeUpdate();
+
+				// コミットを行う
+				super.commit();
+			}catch (Exception e) {
+				super.rollback();
+				throw e;
+			}
+		}else {
+			String sql = "UPDATE work_history SET start_time = ?,start_latitude = ?,start_longitude = ? WHERE emp_id = ? AND `date` = ?;";
+
+			// SQLを実行してその結果を取得し、実行SQLを渡す
+			try {
+				// プリペアステーメントを取得し、実行SQLを渡す
+				PreparedStatement statement = getPreparedStatement(sql);
+
+				statement.setTime(1, time);
+				statement.setBigDecimal(2, latitude);
+				statement.setBigDecimal(3, longitude);
+				statement.setString(4, emp_id);
+				statement.setDate(5,date);
+
+				statement.executeUpdate();
+
+				// コミットを行う
+				super.commit();
+			}catch (Exception e) {
+				super.rollback();
+				throw e;
+			}
+		}
+	}
+
+
 	//退勤打刻用メソッド
 	public void workFinish(String emp_id,Date date,Time time,String feeling,String user_type ,BigDecimal latitude,BigDecimal longitude ,String note) throws Exception{
 
@@ -113,7 +164,7 @@ public class WorkHistoryDAO extends DAO {
 			// プリペアステーメントを取得し、実行SQLを渡す
 			PreparedStatement statement = getPreparedStatement(sql2);
 			statement.setString(1, emp_id);
-			statement.setDate(2, safeDate);
+			statement.setDate(2, date);
 
 			// SQLを実行してその結果を取得する
 			ResultSet rs2 = statement.executeQuery();
@@ -127,6 +178,8 @@ public class WorkHistoryDAO extends DAO {
 				finish_time = rs2.getString("finish_time");
 				holiday = rs2.getString("holiday");
 			}
+			System.out.println("start_timeは"+start_time );
+			System.out.println("finish_timeは"+finish_time);
 			ProcessedTime pt_start = new ProcessedTime(start_time,"start");
 			ProcessedTime pt_finish = new ProcessedTime(finish_time);
 
@@ -208,7 +261,7 @@ public class WorkHistoryDAO extends DAO {
 				breakTime ++;
 			}
 			//退勤が0:00を超えている時
-			if(finishTime <= startTime) {
+			if(finishTime < startTime) {
 				//出勤時刻が12:00以前なら、休憩時間に1時間プラス
 				if(startTime <= 24) {
 					breakTime += 2;
@@ -434,6 +487,11 @@ public class WorkHistoryDAO extends DAO {
 			}
 
 			normalOverTime += workTime - lateOverTime;
+		}
+
+		//有給の時
+		if(holiday.equals("2")) {
+			division = "有給休暇";
 		}
 		//Time型に変換
 		pBreakTime.setIndex(breakTime);
@@ -710,6 +768,9 @@ public class WorkHistoryDAO extends DAO {
 			String division, String much_or_little,BigDecimal start_latitude,BigDecimal start_longitude,BigDecimal finish_latitude, BigDecimal finish_longitude,Boolean isAuto,int flag,String user_type) throws Exception {
 		// TODO 自動生成されたメソッド・スタブ
 
+		System.out.println("date" + date);
+		System.out.println("flag: " + flag);
+
 		String exist = "";
 		if(flag == 2) {
 			exist = "0";
@@ -752,7 +813,8 @@ public class WorkHistoryDAO extends DAO {
 
 			}
 			//打刻なし、自動計算オフ
-		} else if (flag == 2 && !isAuto ) {
+		} else if ((flag == 2 || flag == 3) && !isAuto ) {
+
 			String holiday = getHoliday(date);
 			workStart(emp_id,date,start_time,holiday,start_latitude, start_longitude,exist);
 
@@ -792,16 +854,18 @@ public class WorkHistoryDAO extends DAO {
 			}
 			//出勤退勤打刻あり、出勤打刻のみ、自動計算オン
 		} else if ((flag == 0 || flag == 1)  && isAuto ) {
-			String sql = "UPDATE work_history SET start_time = ?,holiday = ?,start_latitude = ? ,start_longitude = ? WHERE emp_id = ? AND `date` = ?;";
+			String sql = "UPDATE work_history SET start_time = ?,holiday = ?,start_latitude = ? ,start_longitude = ? ,reason = ? WHERE emp_id = ? AND `date` = ?;";
 			try {
+				System.out.println("reasonは " + reason);
 				// プリペアステーメントを取得し、実行SQLを渡す
 				PreparedStatement statement = getPreparedStatement(sql);
 				statement.setTime(1, start_time);
 				statement.setString(2,getHoliday(date));
 				statement.setBigDecimal(3, start_latitude);
 				statement.setBigDecimal(4, start_longitude);
-				statement.setString(5, emp_id);
-				statement.setDate(6,date);
+				statement.setString(5, reason);
+				statement.setString(6, emp_id);
+				statement.setDate(7,date);
 
 				statement.executeUpdate();
 
@@ -816,16 +880,13 @@ public class WorkHistoryDAO extends DAO {
 			workFinish(emp_id,date,finish_time,feeling,user_type ,finish_latitude,finish_longitude,note);
 
 			//打刻なし、自動計算オン
-		}else if(flag == 2 && isAuto ) {
+		}else if((flag == 2 || flag == 3 )&& isAuto ) {
 			String holiday = getHoliday(date);
-			workStart(emp_id,date,start_time,holiday,start_latitude, start_longitude,exist);
+			workStart(emp_id,date,start_time,holiday,start_latitude, start_longitude,exist,reason);
 			workFinish(emp_id,date,finish_time,feeling,user_type ,finish_latitude,finish_longitude,note);
 
 		}
-
-
 	}
-
 	private String getHoliday(Date date) {
 		String dateStr = date.toString();
 		int year = Integer.parseInt(dateStr.substring(0, 4));
@@ -995,6 +1056,13 @@ public class WorkHistoryDAO extends DAO {
 
 			statement.executeUpdate();
 
+			ProcessedTime pTime = new ProcessedTime(finish_time.toString());
+			Calendar cal = new Calendar.Builder().setInstant(date).build();
+
+			if(pTime.getIndex() <= 16) {
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+				date.setTime(cal.getTimeInMillis());
+			}
 			workFinish(emp_id,date,finish_time,feeling,user_type ,finish_latitude,finish_longitude,note);
 			// コミットを行う
 			super.commit();
