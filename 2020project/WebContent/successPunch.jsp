@@ -11,11 +11,12 @@
 <title>打刻完了画面</title>
 </head>
 <body>
+<c:if test="${ user_type == '1' || user_type == '2' }"><jsp:include page="nav.jsp" /></c:if>
 <div class="container">
 	<h2>打刻完了</h2>
-	打刻が完了しました
+	<p>打刻が完了しました</p>
 	<div>
-		<span>${ punchMessage }</span> <span>${ date }</span> <span>${ time }</span>
+		<p><span>${ punchMessage }</span> <span>${ date }</span> <span>${ time }</span></p>
 	</div>
 	<form class="start-btn" method="get" action="${pageContext.request.contextPath}/Home">
 		<input class="btn btn-secondary" type="submit" value="戻る">

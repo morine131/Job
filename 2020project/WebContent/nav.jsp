@@ -10,7 +10,7 @@
 		aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
-	<div class="collapse navbar-collapse" id="navbarNav">
+	<div class="collapse navbar-collapse " id="navbarNav">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item "><a class="nav-link"
 				href="${pageContext.request.contextPath}/Home"><span class="nav-gray">打刻</span></a></li>
@@ -19,12 +19,14 @@
 			<li class="nav-item "><a class="nav-link"
 				href="${pageContext.request.contextPath}/UpdatePassword"><span class="nav-gray">パスワード設定</span></a>
 			</li>
+			<li class="nav-item "><a class="nav-link"
+				href="${pageContext.request.contextPath}/Test"><span class="nav-gray">開発用</span></a>
+			</li>
 		</ul>
 		<span class="nav-name"> ${user_name} </span>
 		<form class="logout-btn" method="post"
 			action="${pageContext.request.contextPath}/Logout">
 			<input class="btn btn-sm btn-light" type="submit" value="ログアウト">
 		</form>
-
 	</div>
 </nav>

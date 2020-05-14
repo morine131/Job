@@ -353,10 +353,16 @@
 						},
 						nextMonth : function() {
 							this.selectedMonth++
+							if(this.selectedMonth>=13){
+								this.selectedMonth = 1
+							}
 							this.changePage()
 						},
 						beforeMonth : function() {
 							this.selectedMonth--
+							if(this.selectedMonth<=0){
+								this.selectedMonth = 12
+							}
 							this.changePage()
 						},
 						getPram : function(name, url) {

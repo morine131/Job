@@ -96,7 +96,6 @@ public class ChangeHolidayServlet extends HttpServlet {
 			Time start_time = UpdateHistoryServlet.convertSQLTime(request.getParameter("start_time"));
 			Time finish_time = UpdateHistoryServlet.convertSQLTime(request.getParameter("finish_time"));
 			String feeling = request.getParameter("feeling");
-			System.out.println("feeling:" + feeling);
 			String user_type = (String)session.getAttribute("user_type");
 			BigDecimal finish_latitude = UpdateHistoryServlet.generateBigDecimal(request.getParameter("finish_latitude"));
 			BigDecimal finish_longitude = UpdateHistoryServlet.generateBigDecimal(request.getParameter("finish_longitude"));

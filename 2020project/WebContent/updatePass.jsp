@@ -29,10 +29,10 @@
 			</p>
 
 			<p>
-				 <input type="password" id="confirm" required placeholder="パスワードの確認">
+				 <input type="password" id="confirm" class="confirm-pass" required placeholder="パスワードの確認">
 			</p>
 			<p>
-				<input class="btn btn-primary" type="submit" value="修正する" onclick="return passCheck()">
+				<input class="btn btn-primary update-pass" type="submit" value="修正する" onclick="return passCheck()">
 			</p>
 		</form>
 	</div>

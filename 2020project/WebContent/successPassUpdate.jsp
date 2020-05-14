@@ -12,6 +12,7 @@
 <title>パスワード修正完了画面</title>
 </head>
 <body>
+<c:if test="${ user_type == '1' || user_type == '2' }"><jsp:include page="nav.jsp" /></c:if>
 <div class="container">
 	<h2>修正完了</h2>
 

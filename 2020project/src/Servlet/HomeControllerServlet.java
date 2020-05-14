@@ -47,7 +47,7 @@ public class HomeControllerServlet extends HttpServlet {
 			forwardPath = "/menu.jsp";
 		}else {
 			forwardPath = "/dakoku.jsp";
-			wb = CheckStart(request);
+			wb = CheckStart(request,response);
 			if(wb.getStart_time() == null) {
 				start_btn_flg = "0";
 			}else {
@@ -77,13 +77,12 @@ public class HomeControllerServlet extends HttpServlet {
 		//doGet(request, response);
 	}
 
-	private WorkHistoryBeans CheckStart(HttpServletRequest request) throws ServletException {
+	private WorkHistoryBeans CheckStart(HttpServletRequest request,HttpServletResponse response) throws ServletException {
 
 		WorkHistoryBeans wb = new WorkHistoryBeans();
 
 		 HttpSession session = request.getSession();
 		 String emp_id = (String) session.getAttribute("emp_id");
-		 String flg = "";
 
 		 Date date = new Date(System.currentTimeMillis()); //現在の日付
 

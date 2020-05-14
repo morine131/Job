@@ -41,7 +41,6 @@ public class ProcessedTime {
 		String MM = "";
 		int num = 0;//最終的にindexになる数
 
-		System.out.println("HHMMSS: " + HHMMSS);
 		HH = HHMMSS.substring(0, 2);
 		MM = HHMMSS.substring(3,5);
 

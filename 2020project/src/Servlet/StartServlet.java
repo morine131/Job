@@ -54,8 +54,8 @@ public class StartServlet extends HttpServlet {
 		 Time time = new Time(System.currentTimeMillis()); //現在の時間
 		 String holiday = getDayOfTheWeek(); //休日か平日かの取得
 
-			BigDecimal latitude = new BigDecimal(request.getParameter("latitude"));
-			BigDecimal longitude = new BigDecimal(request.getParameter("longitude"));
+		BigDecimal latitude = new BigDecimal(request.getParameter("latitude"));
+		BigDecimal longitude = new BigDecimal(request.getParameter("longitude"));
 
 		 //SQLの実行
 		 try(WorkHistoryDAO wd = new WorkHistoryDAO()){

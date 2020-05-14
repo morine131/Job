@@ -33,7 +33,8 @@
 							type="hidden" :value="latitude" name="latitude"> <input
 							type="hidden" :value="longitude" name="longitude"> <input
 							class="good-finish-btn" type="submit" value=""
-							v-bind:disabled="disabledGetPositon">
+							v-bind:disabled="finishDisabled"
+							v-on:mouseover="mouseOverGood" v-on:mouseleave="mouseLemoveGood">
 					</form>
 					<form class="finish-btn" method="post"
 						action="${pageContext.request.contextPath}/Finish">
@@ -41,7 +42,8 @@
 							type="hidden" :value="latitude" name="latitude"> <input
 							type="hidden" :value="longitude" name="longitude"> <input
 							class="normal-finish-btn" type="submit" value=""
-							v-bind:disabled="disabledGetPositon">
+							v-bind:disabled="finishDisabled"
+							v-on:mouseover="mouseOverNormal" v-on:mouseleave="mouseLemoveNormal">
 					</form>
 					<form class="finish-btn" method="post"
 						action="${pageContext.request.contextPath}/Finish">
@@ -49,22 +51,24 @@
 							type="hidden" :value="latitude" name="latitude"> <input
 							type="hidden" :value="longitude" name="longitude"> <input
 							class="bad-finish-btn" type="submit" value=""
-							v-bind:disabled="disabledGetPositon">
+							v-bind:disabled="finishDisabled"
+							v-on:mouseover="mouseOverBad" v-on:mouseleave="mouseLemoveBad">
 					</form>
+					<div>
+						<div class="balloon2-top good" v-if="goodSerif">
+  							<p>良好</p>
+						</div>
+						<div class="balloon2-top normal" v-if="normalSerif">
+  							<p>普通</p>
+						</div>
+						<div class="balloon2-top bad" v-if="badSerif">
+  							<p>イマイチ</p>
+						</div>
+					</div>
 				</div>
-				<br> <br> <br> <br> <br> <br>
-
-				<!--  開発用のテストページ-->
-				開発用
-				<form class="update-pass-btn" method="GET"
-					action="${pageContext.request.contextPath}/Test">
-					<input class="btn " type="submit" value="打刻テスト">
-				</form>
-				<input class="btn " type="button" value="位置情報取得"
-					@click="getPosition()"> <input type="hidden"
-					value="${start_btn_flg}" id="start_btn_flg">
 			</div>
 		</div>
+		<input type="hidden" value="${start_btn_flg}" id="start_btn_flg">
 	</div>
 	<script>
 			new Vue(
@@ -76,8 +80,30 @@
 							isSmartPhpne : false,
 							startDisabled : false,
 							finishDisabled : true,
+							goodSerif :false,
+							normalSerif:false,
+							badSerif:false,
+							width:0
 						},
 						methods : {
+							mouseOverGood : function(){
+								this.goodSerif = true
+							},
+							mouseLemoveGood : function(){
+								this.goodSerif = false
+							},
+							mouseOverNormal : function(){
+								this.normalSerif = true
+							},
+							mouseLemoveNormal : function(){
+								this.normalSerif = false
+							},
+							mouseOverBad : function(){
+								this.badSerif = true
+							},
+							mouseLemoveBad : function(){
+								this.badSerif = false
+							},
 							getPosition : function() {
 								navigator.geolocation.getCurrentPosition(
 										this.successGetPosition,
@@ -110,7 +136,10 @@
 								} else {
 									return false;
 								}
-							}
+							},
+							 handleResize: function() {
+							      this.width = window.innerWidth;
+							    }
 						},
 						computed : {
 							date : function() {
@@ -134,18 +163,35 @@
 								}
 							}
 						},
+						mounted: function () {
+						    window.addEventListener('resize', this.handleResize)
+						  },
+						  beforeDestroy: function () {
+						    window.removeEventListener('resize', this.handleResize)
+						  },
 						created : function() {
-							const start_btn_flg = document
-									.getElementById("start_btn_flg").value
+							const start_btn_flg = document.getElementById("start_btn_flg").value
 
 							if (start_btn_flg === '1') {
-								this.finishDisabled = true
+								this.finishDisabled = false
 								this.startDisabled = true
 							}
+
+							const dt = new Date()
+							dt.setHours(8)
+							dt.setMinutes(0)
+							dt.setSeconds(0)
+							const Now = new Date()
+
+							if(dt > Now){
+								this.finishDisabled = false
+							}
+
 							this.isSmartPhone = this.judgeSmartPhone()
 							if (this.isSmartPhone) {
 								this.getPosition()
 							}
+							this.handleResize()
 						}
 					})
 		</script>

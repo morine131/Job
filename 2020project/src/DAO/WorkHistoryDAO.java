@@ -178,8 +178,7 @@ public class WorkHistoryDAO extends DAO {
 				finish_time = rs2.getString("finish_time");
 				holiday = rs2.getString("holiday");
 			}
-			System.out.println("start_timeは"+start_time );
-			System.out.println("finish_timeは"+finish_time);
+
 			ProcessedTime pt_start = new ProcessedTime(start_time,"start");
 			ProcessedTime pt_finish = new ProcessedTime(finish_time);
 
@@ -768,8 +767,6 @@ public class WorkHistoryDAO extends DAO {
 			String division, String much_or_little,BigDecimal start_latitude,BigDecimal start_longitude,BigDecimal finish_latitude, BigDecimal finish_longitude,Boolean isAuto,int flag,String user_type) throws Exception {
 		// TODO 自動生成されたメソッド・スタブ
 
-		System.out.println("date" + date);
-		System.out.println("flag: " + flag);
 
 		String exist = "";
 		if(flag == 2) {
@@ -856,7 +853,6 @@ public class WorkHistoryDAO extends DAO {
 		} else if ((flag == 0 || flag == 1)  && isAuto ) {
 			String sql = "UPDATE work_history SET start_time = ?,holiday = ?,start_latitude = ? ,start_longitude = ? ,reason = ? WHERE emp_id = ? AND `date` = ?;";
 			try {
-				System.out.println("reasonは " + reason);
 				// プリペアステーメントを取得し、実行SQLを渡す
 				PreparedStatement statement = getPreparedStatement(sql);
 				statement.setTime(1, start_time);
@@ -1044,6 +1040,7 @@ public class WorkHistoryDAO extends DAO {
 
 	}
 
+	//holidayを変更して、自動計算するメソッド
 	public void updateAuto(String emp_id,Date date,Time start_time,Time finish_time , String holiday,String feeling,String user_type ,BigDecimal finish_latitude,BigDecimal finish_longitude ,String note) throws Exception {
 		String sql = "UPDATE work_history SET start_time = ?,holiday = ? WHERE emp_id = ? AND `date` = ?;";
 		try {
@@ -1072,6 +1069,27 @@ public class WorkHistoryDAO extends DAO {
 			throw e;
 		}
 
+	}
+
+	//打刻データを削除するメソッド
+	public void delete(Date date, String emp_id) throws Exception{
+		String sql = "DELETE FROM work_history WHERE (`emp_id` = ?) and (`date` = ?);";
+
+		try {
+			PreparedStatement statement = getPreparedStatement(sql);
+
+			statement.setString(1, emp_id);
+			statement.setDate(2, date);
+
+			statement.executeUpdate();
+
+			super.commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			super.rollback();
+			throw e;
+		}
 	}
 
 

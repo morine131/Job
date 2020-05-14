@@ -32,7 +32,7 @@
 						<th class="update-table-feel">退勤時の気分</th>
 					</tr>
 					<tr>
-						<td><input name="division" type="text" class="form-control" pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"
+						<td><input name="division" type="text" class="form-control" pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"
 							value="${ob.division }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="start_time" type="text" class="form-control" required pattern="\d{2}:\d{2}:\d{2}" title="HH:MM:SSの形式で入力してください"
 							value="${ ob.start_time }" form="form"></td>
@@ -86,8 +86,8 @@
 						<th class="update-table-note-f">修正理由</th>
 					</tr>
 					<tr>
-						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
-						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
+						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
+						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
 				</tbody>
 			</table>
 		</c:if>
@@ -101,7 +101,7 @@
 						<th class="update-table-feel">退勤時の気分</th>
 					</tr>
 					<tr>
-						<td><input name="division" type="text" class="form-control" required pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"
+						<td><input name="division" type="text" class="form-control" required pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"
 							value="${ob.division }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="start_time" type="text" class="form-control" required
 							value="${ ob.start_time }" form="form"></td>
@@ -138,12 +138,22 @@
 						<th class="update-table-note-f">修正理由</th>
 					</tr>
 					<tr>
-						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" required pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
-						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
+						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" required pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
+						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"></td>
 				</tbody>
 			</table>
 		</c:if>
 		<br>
+		<form class="under-btn" method="GET"
+			action="${pageContext.request.contextPath}/Delete">
+
+			 <input class="btn btn-danger"
+				type="submit" value="削除">
+				<input type="hidden" :value="target_year" name="target_year">
+				<input type="hidden" :value="target_month" name="target_month">
+				<input type="hidden" :value="target_day" name="target_day">
+				<input type="hidden" value="${ob.day}" name="day">
+		</form>
 		<form class="under-btn" method="POST" id="form"
 			action="${pageContext.request.contextPath}/UpdateHistory">
 			<input type="hidden" value="${flag}" name="flag"> <input
@@ -165,7 +175,7 @@
 				type="hidden" value="${ob.finish_longitude }"
 				name="finish_longitude"> <input type="hidden"
 				:value="picked" name="isAuto"> <input class="btn btn-primary"
-				type="submit" value="修正する">
+				type="submit" value="修正">
 		</form>
 		<form class="under-btn" method="get"
 			action="${pageContext.request.contextPath}/History">

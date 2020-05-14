@@ -27,6 +27,7 @@
 		日:<input type="text" name="day"><br>
 		時:<input type="text" name="hour"><br>
 		分:<input type="text" name="minute"><br>
+		exist:<input type="text" name="exist" v-model="exist"><br>
 						<input type="hidden" :value="latitude" name="latitude">
 				<input type="hidden" :value="longitude" name="longitude">
 		<input class="btn btn-primary" type="submit" value="出勤"><br>
@@ -92,7 +93,8 @@
 				month: null,
 				day: null,
 				hour:null,
-				minute: null
+				minute: null,
+				exist: null
 			},
 			methods : {
 				getPosition : function(){

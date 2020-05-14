@@ -54,12 +54,12 @@ public class TestServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String emp_id = (String) session.getAttribute("emp_id");
 		String user_type = (String)session.getAttribute("user_type");
-		String exist = (String)session.getAttribute("exist");
+		String exist = request.getParameter("exist");
 
 		String feeling = request.getParameter("feeling");
 
-		BigDecimal latitude = new BigDecimal(request.getParameter("latitude"));
-		BigDecimal longitude = new BigDecimal(request.getParameter("longitude"));
+		BigDecimal latitude = new BigDecimal(0);
+		BigDecimal longitude = new BigDecimal(0);
 
 		int year = Integer.parseInt(request.getParameter("year"));
 		int month = Integer.parseInt(request.getParameter("month"));

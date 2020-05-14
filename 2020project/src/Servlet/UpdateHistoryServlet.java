@@ -144,7 +144,7 @@ public class UpdateHistoryServlet extends HttpServlet {
 
 		String confirm_message = targetYear +"/" + targetMonth + "/" + targetDay +"のデータを更新しました。";
 		session.setAttribute("confirm_message", confirm_message);
-		// HomeControllerにリダイレクトする
+		//リダイレクトする
 		String ServletPath =  request.getContextPath()+"/History?target_year=" + targetYear +"&target_month=" + targetMonth;
 	    response.sendRedirect(ServletPath);
 	}
