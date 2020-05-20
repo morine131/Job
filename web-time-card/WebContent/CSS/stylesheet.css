@@ -738,8 +738,12 @@
 		margin-bottom: 50px;
 	}
 	.calendar{
-		width:600px;
+		width:350px;
 		margin-left:auto;
 		margin-right:auto;
+	}
+	.calendar-date{
+		width:50px;
+		height:50px;
 	}
 }

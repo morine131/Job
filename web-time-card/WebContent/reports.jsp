@@ -13,16 +13,13 @@
 	<jsp:include page="nav.jsp" />
 	<div class="container" id="app">
 		<h2>業務報告</h2>
-		<form action="${pageContext.request.contextPath}/CreateReport"
-			method="GET">
-			<input type="submit" value="新規作成" class="btn btn-primary">
-		</form>
+
 		<div class="manage-box">
 
 			<div class="width200">
 				<div>年を選択</div>
 				<div class="left-btn" v-on:click="beforeYear"></div>
-				<select name="example" v-model="selectedYear"
+				<select name="example" v-model="target_year"
 					v-on:change="changePage"
 					class="inline-block form-control history-select">
 					<c:forEach items="${ yearList }" var="year">
@@ -34,7 +31,7 @@
 			<div class="width200">
 				<div>月を選択</div>
 				<div class="left-btn" v-on:click="beforeMonth"></div>
-				<select name="example" v-model="selectedMonth"
+				<select name="example" v-model="target_month"
 					v-on:change="changePage"
 					class="inline-block form-control history-select">
 					<option>1</option>
@@ -52,24 +49,9 @@
 				</select>
 				<div class="right-btn" v-on:click="nextMonth"></div>
 			</div>
-			<div class="width200">
-				<div>週を選択</div>
-				<div class="left-btn" v-on:click="beforeYear"></div>
-				<select name="example" v-model="selectedYear"
-					v-on:change="changePage"
-					class="inline-block form-control history-select">
-					<option>第1週</option>
-					<option>第2週</option>
-					<option>第3週</option>
-					<option>第4週</option>
-					<option>第5週</option>
-				</select>
-				<div class="right-btn" v-on:click="nextYear"></div>
-			</div>
 		</div>
 
-		${line } <br>
-		<br> ${dateList }
+
 		<table class="table-bordered calendar">
 			<tbody>
 				<tr>
@@ -85,7 +67,19 @@
 					<tr>
 						<c:forEach var="obj" items="${dateList[status.index]}" varStatus="num">
 							<td><c:if test="${dateList[status.index][num.index] >= 1}">
-									${dateList[status.index][num.index] }
+									<form action="${pageContext.request.contextPath}/Reports" method="GET">
+									<input type="hidden" :value="target_year" name="target_year">
+									<input type="hidden" :value="target_month" name="target_month">
+									<input type="hidden" value="${dateList[status.index][num.index] }" name="target_date">
+									<c:choose>
+										<c:when test="${dateList[status.index][num.index] == target_date}">
+											<input type="submit" class="btn calendar-date btn-primary " value="${dateList[status.index][num.index] }" >
+										</c:when>
+										<c:otherwise>
+											<input type="submit" class="btn calendar-date " value="${dateList[status.index][num.index] }" >
+										</c:otherwise>
+									</c:choose>
+									</form>
 								</c:if>
 							</td>
 						</c:forEach>
@@ -93,6 +87,22 @@
 				</c:forEach>
 			</tbody>
 		</table>
+
+		<div>
+			<p>作業報告</p>
+			<textarea form="form" name="report"></textarea>
+		</div>
+		<div>
+			<p>備考</p>
+			<textarea form="form" name="text"></textarea>
+		</div>
+
+		<form id="form" action="${pageContext.request.contextPath}/CreateReport" method="POST">
+			<input type="hidden" :value="target_year" name="target_year">
+			<input type="hidden" :value="target_month" name="target_month">
+			<input type="hidden" :value="target_day" name="target_day">
+			<input type="submit" value="更新" class="btn btn-primary">
+		</form>
 	</div>
 	<script>
 		new Vue(
@@ -101,7 +111,7 @@
 					data : {
 						target_year : null,
 						target_month : null,
-						target_day : null
+						target_date : null
 					},
 					methods : {
 						getPram : function(name, url) {
@@ -122,24 +132,24 @@
 						setTarget : function() {
 							if (this.getPram('target_year') === ''
 									|| this.getPram('target_year') === null) {
-								this.target_year = new Date().getFullYear() //プルダウンの初期値として現在年を指定
+								this.target_year = new Date().getFullYear()
 							} else {
-								this.selected = this.getPram('target_year')
+								this.target_year= this.getPram('target_year')
 							}
 
 							if (this.getPram('target_month') === ''
 									|| this.getPram('target_month') === null) {
-								this.target_month = new Date().getMonth() + 1 //プルダウンの初期値として現在年を指定
+								this.target_month = new Date().getMonth() + 1
 							} else {
 								this.target_month = this
 										.getPram('target_month')
 							}
 
-							if (this.getPram('target_day') === ''
-									|| this.getPram('target_day') === null) {
-								this.target_day = new Date().getDate() //プルダウンの初期値として現在年を指定
+							if (this.getPram('target_date') === ''
+									|| this.getPram('target_date') === null) {
+								this.target_date = new Date().getDate()
 							} else {
-								this.target_day = this.getPram('target_day')
+								this.target_date = this.getPram('target_date')
 							}
 						}
 					},

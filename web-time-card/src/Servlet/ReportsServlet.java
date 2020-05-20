@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import DAO.WorkHistoryDAO;
+
 /**
  * Servlet implementation class ReportsServlet
  */
@@ -37,6 +39,7 @@ public class ReportsServlet extends HttpServlet {
 
 		int target_year = 0;
 		int target_month = 0;
+		int target_date =0;
 
 		if(request.getParameter("target_year") == null) {
 		    Calendar calendar = Calendar.getInstance();
@@ -49,6 +52,12 @@ public class ReportsServlet extends HttpServlet {
 		    target_month = calendar.get(Calendar.MONTH) +1;
 		}else {
 			target_month = Integer.parseInt(request.getParameter("target_month"));
+		}
+		if(request.getParameter("target_date") == null) {
+		    Calendar calendar = Calendar.getInstance();
+		    target_date = calendar.get(Calendar.DATE) ;
+		}else {
+			target_date = Integer.parseInt(request.getParameter("target_date"));
 		}
 
 
@@ -77,9 +86,19 @@ public class ReportsServlet extends HttpServlet {
 			line ++;
 		}
 
+		//jspのselectで表示する年のリストを取得する
+		ArrayList<Integer>yearList = new ArrayList<Integer>();
+		try (WorkHistoryDAO wd = new WorkHistoryDAO()){
+			yearList = wd.getYearList();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+		request.setAttribute("yearList", yearList);
+
 
 		request.setAttribute("line", line);
 		request.setAttribute("dateList", dateList);
+		request.setAttribute("target_date", target_date);
 
 
 		RequestDispatcher rd = request.getRequestDispatcher("/reports.jsp");
@@ -100,7 +119,6 @@ public class ReportsServlet extends HttpServlet {
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
         int result = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        System.out.println(calendar.get(Calendar.MONTH));
 
         return result;
 	}
@@ -113,7 +131,6 @@ public class ReportsServlet extends HttpServlet {
 		calendar.set(Calendar.MONTH, month - 1);
 		calendar.set(Calendar.DATE, 1);
 
-		System.out.println(calendar.get(Calendar.MONTH));
 		switch (calendar.get(Calendar.DAY_OF_WEEK)) {
 		case Calendar.SUNDAY:     // Calendar.SUNDAY:1 （値。意味はない）
 			return 7;
