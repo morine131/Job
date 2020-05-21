@@ -41,6 +41,13 @@
 					<input class="btn" type="submit" value="パスワード設定">
 				</form>
 			</div>
+			<div class="menu-step">
+				<form class="menu-btn" method="GET"
+					action="${pageContext.request.contextPath}/ManageReports">
+					<input  class="btn" type="submit" value="業務報告管理">
+				</form>
+				<div class="empty"></div>
+			</div>
 		</div>
 	</div>
 </body>

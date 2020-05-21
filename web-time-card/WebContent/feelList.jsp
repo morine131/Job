@@ -270,9 +270,6 @@
 						},
 						changePage : function() {
 							const url = '/web-time-card/FeelList?target_year=' + this.selected
-	/* 						console.log(url)
-							location.href = url */
-
 							  var a = document.createElement('a');
 							  a.href = url;
 							  a.click();

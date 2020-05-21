@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -15,39 +16,70 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import DAO.ReportsDAO;
+import DAO.UserInfoDAO;
 import DAO.WorkHistoryDAO;
 import DTO.ReportBeans;
 
 /**
- * Servlet implementation class ReportsServlet
+ * Servlet implementation class ManageReportsServlet
  */
-@WebServlet("/Reports")
-public class ReportsServlet extends HttpServlet {
+@WebServlet("/ManageReportsServlet")
+public class ManageReportsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public ReportsServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public ManageReportsServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		// 文字コード設定
 		request.setCharacterEncoding("UTF-8");
 
 		HttpSession session = request.getSession();
-		String emp_id = (String)session.getAttribute("emp_id");
+		String admin_flg = (String)session.getAttribute("admin_flg");
+		if(!admin_flg.equals("1")) {
+			// セッションスコープの情報を破棄
+			session.invalidate();
+
+			String message = "管理者権限へのアクセスが拒否されました";
+			request.setAttribute("message", message);
+
+			// フォワード実行
+			RequestDispatcher rd = request.getRequestDispatcher("/login.jsp");
+			rd.forward(request, response);
+		}
+
+		HashMap<String,ArrayList<String>> userMap = new HashMap<String,ArrayList<String>>(); //情報を取り出すだけのマップ
+		try(UserInfoDAO ud = new UserInfoDAO();){
+			userMap = (HashMap<String,ArrayList<String>>)ud.getUserMap();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+		ArrayList<String>user_name_list = userMap.get("user_name_list");
+		ArrayList<String>emp_id_list = userMap.get("emp_id_list");
+
+		String targetUser = "";
+		if(request.getParameter("target_user") == null) {
+		    targetUser = user_name_list.get(0) ;
+		}else {
+			targetUser= request.getParameter("target_user");
+		}
+		//target_userのemp_idを取得する
+		int index = user_name_list.indexOf(targetUser);
+		String emp_id = emp_id_list.get(index);
+
 
 		int target_year = 0;
 		int target_month = 0;
 		int target_date =0;
-
 		if(request.getParameter("target_year") == null) {
 		    Calendar calendar = Calendar.getInstance();
 		    target_year = calendar.get(Calendar.YEAR) ;
@@ -118,7 +150,7 @@ public class ReportsServlet extends HttpServlet {
 		request.setAttribute("target_date", target_date);
 
 
-		RequestDispatcher rd = request.getRequestDispatcher("/reports.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/manageReports.jsp");
 		rd.forward(request, response);
 	}
 
@@ -126,39 +158,6 @@ public class ReportsServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-
-		HttpSession session = request.getSession();
-		String emp_id = (String)session.getAttribute("emp_id");
-
-		int target_year = Integer.parseInt( request.getParameter("target_year") );
-		int target_month = Integer.parseInt( request.getParameter("target_month") );
-		int target_date = Integer.parseInt( request.getParameter("target_date") );
-
-		Date date = new Date(target_year-1900,target_month-1,target_date);
-
-		String report = request.getParameter("report");
-		String text = request.getParameter("text");
-
-		ReportBeans rb = new ReportBeans();
-		rb.setDate(date);
-		rb.setEmp_id(emp_id);
-		rb.setReport(report);
-		rb.setText(text);
-
-		try (ReportsDAO repo = new ReportsDAO()){
-			repo.createReport(rb);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			throw new ServletException(e);
-		}
-
-		String repoUpdate_message = target_year +"/" + target_month + "/" + target_date +"の業務報告を更新しました。";
-		session.setAttribute("repoUpdate_message", repoUpdate_message);
-		//リダイレクトする
-		String ServletPath =  request.getContextPath()+"/Reports?target_year=" + target_year +"&target_month=" + target_month +"&target_date=" + target_date;
-	    response.sendRedirect(ServletPath);
 
 	}
 	//年と月を指定して、月末日を取得するメソッド

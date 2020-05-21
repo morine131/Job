@@ -187,6 +187,15 @@
 	p{
 		font-size:40px;
 	}
+	.btn-pink {
+    color: ;
+    background-color: #ffb7b7;
+    border-color: #ffb7b7;
+	}
+	.calendar{
+		margin-right:auto;
+		margin-left:auto;
+	}
 
 }
 
@@ -390,6 +399,16 @@
 		border-color: #92D7E7;
 		border-radius: 6px;
 		margin: 5px;
+		vertical-align:top;
+	}
+	.empty{
+		display: inline-block;
+		width: 323px;
+		height: 123px;
+		margin: 5px;
+	}
+	.menu-step{
+		height:133px;
 	}
 	.menu-btn input {
 		font-size: 23px;
@@ -738,12 +757,49 @@
 		margin-bottom: 50px;
 	}
 	.calendar{
+		display:inline-block;
 		width:350px;
-		margin-left:auto;
-		margin-right:auto;
+		margin-right:50px;
+		border-collapse: collapse;
+
+	}
+	.calendar th, .calendar td {
+		border: solid;
+		border-color: rgba(0, 0, 0, 0.29);
+		border-width: thin;
 	}
 	.calendar-date{
 		width:50px;
 		height:50px;
 	}
+	.calendar-box{
+		display:inline-block;
+		vertical-align:top;
+	}
+	.repo-select-box{
+		width: 430px;
+		margin-right: 20px;
+		margin-left: auto;
+		padding-top:15px;
+	}
+	.repo-title{
+		font-size:23px;
+		margin-top:15px;
+	}
+	.text-title{
+		font-size:23px;
+		margin-top:15px;
+	}
+	.repo-area{
+		vertical-align:top;
+	}
+	.btn-pink {
+    color: ;
+    background-color: #ffb7b7;
+    border-color: #ffb7b7;
+	}
+	.repo-up{
+		margin-top:20px;
+	}
+
 }

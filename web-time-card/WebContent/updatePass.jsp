@@ -37,7 +37,6 @@
 		</form>
 	</div>
 	<script type="text/javascript">
-			console.log("javascript効いてます")
             function passCheck(){
             	const regexp =  new RegExp(/^[a-z\d]{8,100}$/i) //正規表現: 半角英数字8文字以上100文字以下の正規表現
             	const passStr = document.getElementById("pass").value
