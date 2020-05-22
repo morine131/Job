@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import DAO.WorkHistoryDAO;
+import myClass.ProcessedTime;
 
 /**
  * Servlet implementation class FinishServlet
@@ -60,6 +62,8 @@ public class FinishServlet extends HttpServlet {
 		Time time = new Time(System.currentTimeMillis());
 		String note = null;
 
+		System.out.println(request.getParameter("latitude"));
+		System.out.println(request.getParameter("longitude"));
 		BigDecimal latitude = new BigDecimal(request.getParameter("latitude"));
 		BigDecimal longitude = new BigDecimal(request.getParameter("longitude"));
 
@@ -73,6 +77,14 @@ public class FinishServlet extends HttpServlet {
 
 		//打刻完了画面に渡す文字列を指定
 		request.setAttribute("punchMessage", "退勤");
+
+		//8時までの退勤打刻は前日分の退勤打刻とする
+		ProcessedTime pTime = new ProcessedTime(time.toString());
+		Calendar cal = new Calendar.Builder().setInstant(date).build();
+		if(pTime.getIndex() <= 16) {
+			cal.add(Calendar.DAY_OF_MONTH, -1);
+			date.setTime(cal.getTimeInMillis());
+		}
 
 		Boolean finished = false;
 		try(WorkHistoryDAO wd = new WorkHistoryDAO()){

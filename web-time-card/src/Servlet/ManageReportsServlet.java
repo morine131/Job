@@ -23,7 +23,7 @@ import DTO.ReportBeans;
 /**
  * Servlet implementation class ManageReportsServlet
  */
-@WebServlet("/ManageReportsServlet")
+@WebServlet("/ManageReports")
 public class ManageReportsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -67,7 +67,7 @@ public class ManageReportsServlet extends HttpServlet {
 		ArrayList<String>emp_id_list = userMap.get("emp_id_list");
 
 		String targetUser = "";
-		if(request.getParameter("target_user") == null) {
+		if(request.getParameter("target_user") == null || request.getParameter("target_user") == "") {
 		    targetUser = user_name_list.get(0) ;
 		}else {
 			targetUser= request.getParameter("target_user");
@@ -143,6 +143,8 @@ public class ManageReportsServlet extends HttpServlet {
 			throw new ServletException(e);
 		}
 
+		request.setAttribute("targetUser", targetUser);
+		request.setAttribute("nameList", user_name_list);
 		request.setAttribute("yearList", yearList);
 		request.setAttribute("rb", rb);
 		request.setAttribute("line", line);

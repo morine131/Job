@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import DAO.UserInfoDAO;
 import DAO.WorkHistoryDAO;
 
 /**
@@ -64,11 +65,22 @@ public class DeleteServlet extends HttpServlet {
 
 		Date date = UpdateHistoryServlet.convertSQLDate(targetYear,targetMonth,targetDay);
 
+		Boolean isPaidHoliday = false;
 		try (WorkHistoryDAO wd = new WorkHistoryDAO()){
-			wd.delete(date,emp_id);
+			isPaidHoliday = wd.delete(date,emp_id);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}
+		if(isPaidHoliday) {
+			try(UserInfoDAO ud = new UserInfoDAO()){
+				ud.updatePaidVacations(emp_id, "plus");
+				int num = (int) session.getAttribute("paid_vacations");
+				num ++;
+				session.setAttribute("paid_vacations", num);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
 		}
 		String confirm_message = targetYear +"/" + targetMonth + "/" + targetDay +"のデータを削除しました";
 		session.setAttribute("confirm_message", confirm_message);

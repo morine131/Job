@@ -1,32 +1,38 @@
 @charset "UTF-8";
 
 @media screen and (max-width: 990px) {
-	.container{
-		text-align:center;
+		.finish-svg {
+		display: inline-block;
+		border-radius: 50%;
+		cursor: pointer;
+		margin-top: 20px;
 	}
-	.date{
-		font-size:60px;
+	.container {
+		text-align: center;
 	}
-	.dakoku-menu-bar{
-		font-size:50px;
+	.date {
+		font-size: 60px;
 	}
-	.start-btn{
-		margin-bottom:30px;
-		width :200px;
-		height:200px;
-		margin-right:auto;
-		margin-left:auto;
-		font-size:50px;
-		border-radius:50%;
+	.dakoku-menu-bar {
+		font-size: 50px;
+	}
+	.start-btn {
+		margin-bottom: 30px;
+		width: 200px;
+		height: 200px;
+		margin-right: auto;
+		margin-left: auto;
+		font-size: 50px;
+		border-radius: 50%;
 	}
 	.startBtn {
 		text-decoration: none;
-		background: #98a7da;
-		color: #FFF;
-		width: 200px;
+		background: cornflowerblue;
+		color: black;
+		width: 120px;
 		margin-right: auto;
 		margin-left: auto;
-		height: 200px;
+		height: 120px;
 		line-height: 120px;
 		border-radius: 50%;
 		text-align: center;
@@ -35,6 +41,7 @@
 		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);
 		border-bottom: solid 3px #98a7da;
 		transition: .4s;
+		font-size: 20px;
 	}
 	.startiDisabled {
 		text-decoration: none;
@@ -61,7 +68,7 @@
 		box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
 		border-bottom: none;
 	}
-		.good-finish-btn {
+	.good-finish-btn {
 		background-image: url(../images/good.svg);
 		text-decoration: none;
 		width: 83px;
@@ -71,8 +78,10 @@
 		border-radius: 50%;
 		text-align: center;
 		cursor: pointer;
-				margin-top:50px;
-		marigin-bottom:50px;
+		margin-top: 50px;
+		marigin-bottom: 50px;
+		border-width: thin;
+		border-color: black;
 	}
 	.normal-finish-btn {
 		background-image: url(../images/normal.svg);
@@ -84,8 +93,10 @@
 		border-radius: 50%;
 		text-align: center;
 		cursor: pointer;
-		margin-top:50px;
-		marigin-bottom:50px;
+		margin-top: 50px;
+		marigin-bottom: 50px;
+		border-width: thin;
+		border-color: black;
 	}
 	.bad-finish-btn {
 		background-image: url(../images/bad.svg);
@@ -97,8 +108,10 @@
 		border-radius: 50%;
 		text-align: center;
 		cursor: pointer;
-		margin-top:50px;
-		marigin-bottom:50px;
+		margin-top: 50px;
+		marigin-bottom: 50px;
+		border-width: thin;
+		border-color: black;
 	}
 	.background-green {
 		background-color: #7fff7f;
@@ -119,84 +132,83 @@
 		background-color: #ff7f7f;
 		text-align: left;
 	}
-	.feel-table{
-		width:100%;
-		margin-right:auto;
-		marign-left:auto;
+	.feel-table {
+		width: 100%;
+		margin-right: auto;
+		marign-left: auto;
 	}
-	admin-home-btn{
-		display:none;
+	admin-home-btn {
+		display: none;
 	}
-	.back-btn{
-		display:none;
+	.back-btn {
+		display: none;
 	}
-	.user-name{
-		font-size:50px;
+	.user-name {
+		font-size: 50px;
 	}
-	.pass-message{
-		font-size:50px;
+	.pass-message {
+		font-size: 50px;
 	}
-	h2{
-		font-size:80px;
+	h2 {
+		font-size: 80px;
 	}
-	.newPass{
-		margin-top:80px;
+	.newPass {
+		margin-top: 80px;
 	}
-	.newpass{
-		width:500px;
-		height:100px;
-		font-size:50px;
+	.newpass {
+		width: 500px;
+		height: 100px;
+		font-size: 50px;
 	}
-	.confirm-pass{
-		width:500px;
-		height:100px;
-		font-size:50px;
-		margin-top:100px;
+	.confirm-pass {
+		width: 500px;
+		height: 100px;
+		font-size: 50px;
+		margin-top: 100px;
 	}
-	.update-pass{
-		width:300px;
-		height:180px;
-		font-size:50px;
-		border-radius:30px;
-		margin-top:60px;
+	.update-pass {
+		width: 300px;
+		height: 180px;
+		font-size: 50px;
+		border-radius: 30px;
+		margin-top: 60px;
 	}
 	.nav-name {
 		color: white;
-		font-size:25px;
-		display:none;
+		font-size: 25px;
+		display: none;
 	}
-	.logout-btn{
-		width:80px;
-		height:50px;
-		font-size:20px;
+	.logout-btn {
+		width: 80px;
+		height: 50px;
+		font-size: 20px;
 	}
 	.nav-gray {
 		color: #d3d3d3;
 	}
-	.navbar-nav{
-		font-size:30px;
+	.navbar-nav {
+		font-size: 30px;
 	}
-	.navbar-brand{
-		font-size:25px;
+	.navbar-brand {
+		font-size: 25px;
 	}
-	.btn-sm{
-		width:135px;
-		height:50px;
-		font-size:25px;
+	.btn-sm {
+		width: 135px;
+		height: 50px;
+		font-size: 25px;
 	}
-	p{
-		font-size:40px;
+	p {
+		font-size: 40px;
 	}
 	.btn-pink {
-    color: ;
-    background-color: #ffb7b7;
-    border-color: #ffb7b7;
+		color:;
+		background-color: #ffb7b7;
+		border-color: #ffb7b7;
 	}
-	.calendar{
-		margin-right:auto;
-		margin-left:auto;
+	.calendar {
+		margin-right: auto;
+		margin-left: auto;
 	}
-
 }
 
 @media screen and (min-width : 991px) {
@@ -269,8 +281,8 @@
 	}
 	.startBtn {
 		text-decoration: none;
-		background: #98a7da;
-		color: #FFF;
+		background: cornflowerblue;
+		color: black;
 		width: 120px;
 		margin-right: auto;
 		margin-left: auto;
@@ -283,6 +295,7 @@
 		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);
 		border-bottom: solid 3px #98a7da;
 		transition: .4s;
+		font-size: 20px;
 	}
 	.startiDisabled {
 		text-decoration: none;
@@ -323,6 +336,8 @@
 		border-radius: 50%;
 		text-align: center;
 		cursor: pointer;
+		border-width: thin;
+		border-color: black;
 	}
 	.normal-finish-btn {
 		background-image: url(../images/normal.svg);
@@ -334,6 +349,8 @@
 		border-radius: 50%;
 		text-align: center;
 		cursor: pointer;
+		border-width: thin;
+		border-color: black;
 	}
 	.bad-finish-btn {
 		background-image: url(../images/bad.svg);
@@ -345,6 +362,8 @@
 		border-radius: 50%;
 		text-align: center;
 		cursor: pointer;
+		border-width: thin;
+		border-color: black;
 	}
 	.logout-btn {
 		display: inline-block;
@@ -399,16 +418,16 @@
 		border-color: #92D7E7;
 		border-radius: 6px;
 		margin: 5px;
-		vertical-align:top;
+		vertical-align: top;
 	}
-	.empty{
+	.empty {
 		display: inline-block;
 		width: 323px;
 		height: 123px;
 		margin: 5px;
 	}
-	.menu-step{
-		height:133px;
+	.menu-step {
+		height: 133px;
 	}
 	.menu-btn input {
 		font-size: 23px;
@@ -675,6 +694,12 @@
 		margin-bottom: 30px;
 		margin-top: 30px;
 	}
+	.width250 {
+		width: 250px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 5px;
+	}
 	.width200 {
 		width: 200px;
 		margin-left: auto;
@@ -756,50 +781,66 @@
 	.delete-date {
 		margin-bottom: 50px;
 	}
-	.calendar{
-		display:inline-block;
-		width:350px;
-		margin-right:50px;
+	.calendar {
+		display: inline-block;
+		width: 350px;
+		margin-right: 50px;
 		border-collapse: collapse;
-
 	}
 	.calendar th, .calendar td {
 		border: solid;
 		border-color: rgba(0, 0, 0, 0.29);
 		border-width: thin;
 	}
-	.calendar-date{
-		width:50px;
-		height:50px;
+	.calendar-date {
+		width: 50px;
+		height: 50px;
 	}
-	.calendar-box{
-		display:inline-block;
-		vertical-align:top;
+	.calendar-box {
+		display: inline-block;
+		vertical-align: top;
 	}
-	.repo-select-box{
+	.mana-repo-select-box {
 		width: 430px;
 		margin-right: 20px;
 		margin-left: auto;
-		padding-top:15px;
+		padding-top: 15px;
+		border: solid;
+		border-radius: 10px;
+		border-width: thin;
+		border-color: gray;
+		margin-bottom: 20px;
+		margin-top: 20px;
 	}
-	.repo-title{
-		font-size:23px;
-		margin-top:15px;
+	.repo-select-box {
+		width: 430px;
+		margin-right: 20px;
+		margin-left: auto;
+		padding-top: 15px;
 	}
-	.text-title{
-		font-size:23px;
-		margin-top:15px;
+	.repo-title {
+		font-size: 23px;
+		margin-top: 15px;
 	}
-	.repo-area{
-		vertical-align:top;
+	.text-title {
+		font-size: 23px;
+		margin-top: 15px;
+	}
+	.repo-area {
+		vertical-align: top;
 	}
 	.btn-pink {
-    color: ;
-    background-color: #ffb7b7;
-    border-color: #ffb7b7;
+		color:;
+		background-color: #ffb7b7;
+		border-color: #ffb7b7;
 	}
-	.repo-up{
-		margin-top:20px;
+	.repo-up {
+		margin-top: 20px;
 	}
-
+	.finish-svg {
+		display: inline-block;
+		border-radius: 50%;
+		cursor: pointer;
+		margin-top: 20px;
+	}
 }

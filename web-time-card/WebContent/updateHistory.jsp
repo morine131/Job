@@ -32,7 +32,7 @@
 						<th class="update-table-feel">退勤時の気分</th>
 					</tr>
 					<tr>
-						<td><input name="division" type="text" class="form-control" pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-ー]*" title="特殊記号は使えません"
+						<td><input name="division" type="text" class="form-control" pattern="[^!#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~]+" title="記号を含めることはできません"
 							value="${ob.division }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="start_time" type="text" class="form-control" required pattern="\d{2}:\d{2}" title="HH:MMの形式で入力してください"
 							value="${ ob.start_time_hhmm }" form="form"></td>
@@ -53,9 +53,9 @@
 						<th >超過・不足</th>
 					</tr>
 					<tr>
-						<td><input name="break_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+						<td><input name="break_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:00またはHH:30の形式で入力してください"
 							value="${ ob.break_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="work_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+						<td><input name="work_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:00またはHH:30の形式で入力してください"
 							value="${ ob.work_time }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="much_or_little" type="text" class=" form-control update-table-much-f" required  pattern="^[1-9]\d*:[30]0|0:[30]0|-[1-9]\d*:[30]0" title="H:MM or -H:MMの形式で入力してください"
 							value="${ ob.much_or_little }" v-bind:disabled="isAuto"
@@ -70,11 +70,11 @@
 						<th >深夜残業時間</th>
 					</tr>
 					<tr>
-						<td><input name="standard_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+						<td><input name="standard_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:00またはHH:30の形式で入力してください"
 							value="${ ob.standard_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="over_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+						<td><input name="over_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:00またはHH:30の形式で入力してください"
 							value="${ ob.over_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="late_over_time" type="text" class=" form-control update-table-much-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+						<td><input name="late_over_time" type="text" class=" form-control update-table-much-f" required pattern="\d{2}:[30]0" title="HH:00またはHH:30の形式で入力してください"
 							value="${ ob.late_over_time }" v-bind:disabled="isAuto"
 							form="form"></td>
 				</tbody>
@@ -86,8 +86,8 @@
 						<th class="update-table-note-f">修正理由</th>
 					</tr>
 					<tr>
-						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-ー]*" title="特殊記号は使えません"></td>
-						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-ー]*" title="特殊記号は使えません"></td>
+						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" pattern="[^!#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~]+" title="記号を含めることはできません"></td>
+						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[^!#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~]+" title="記号を含めることはできません"></td>
 				</tbody>
 			</table>
 		</c:if>
@@ -101,11 +101,11 @@
 						<th class="update-table-feel">退勤時の気分</th>
 					</tr>
 					<tr>
-						<td><input name="division" type="text" class="form-control" required pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-]*" title="特殊記号は使えません"
+						<td><input name="division" type="text" class="form-control" required pattern="[^!#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~]+" title="記号を含めることはできません"
 							value="${ob.division }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="start_time" type="text" class="form-control" required
+						<td><input name="start_time" type="text" class="form-control" required pattern="\d{2}:\d{2}" title="HH:MMの形式で入力してください"
 							value="${ ob.start_time_hhmm }" form="form"></td>
-						<td><input name="finish_time" type="text" class="form-control" required
+						<td><input name="finish_time" type="text" class="form-control" required pattern="\d{2}:\d{2}" title="HH:MMの形式で入力してください"
 							value="${ ob.finish_time_hhmm }" form="form"></td>
 						<td><select name="feeling" v-model="feeling" form="form" class="form-control update-table-feel" required>
 								<option value="0">良好</option>
@@ -122,9 +122,9 @@
 						<th >超過・不足</th>
 					</tr>
 					<tr>
-						<td><input name="break_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+						<td><input name="break_time" type="text"  class=" form-control update-table-break-f" required pattern="\d{2}:[30]0" title="HH:00またはHH:30の形式で入力してください"
 							value="${ ob.break_time }" v-bind:disabled="isAuto" form="form"></td>
-						<td><input name="work_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:MMの形式で入力してください"
+						<td><input name="work_time" type="text"  class="form-control update-table-work-f" required pattern="\d{2}:[30]0" title="HH:00またはHH:30の形式で入力してください"
 							value="${ ob.work_time }" v-bind:disabled="isAuto" form="form"></td>
 						<td><input name="much_or_little" type="text" class=" form-control update-table-much-f" required pattern="^[1-9]\d*:[30]0|0:[30]0|-[1-9]\d*:[30]0" title="H:MM or -H:MMの形式で入力してください"
 							value="${ ob.much_or_little }" v-bind:disabled="isAuto"
@@ -138,8 +138,8 @@
 						<th class="update-table-note-f">修正理由</th>
 					</tr>
 					<tr>
-						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" required pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-ー]*" title="特殊記号は使えません"></td>
-						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[亜-熙ぁ-んァ-ン０-９a-zA-Z0-9\-ー]*" title="特殊記号は使えません"></td>
+						<td><input name="note" type="text" value="${ ob.note }" class="update-table-note-f" form="form" required pattern="[^!#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~]+" title="記号を含めることはできません"></td>
+						<td><input type="text" name="reason" value="${ ob.reason }"  class="update-table-reason-f" form="form" required pattern="[^!#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~]+" title="記号を含めることはできません"></td>
 				</tbody>
 			</table>
 		</c:if>

@@ -11,6 +11,7 @@
 <title>勤務表管理画面</title>
 </head>
 <body>
+${start_latitude_list}
 	<div class="container" id="app">
 		<div class="manage-top">
 		<form class="admin-home-btn" method="get" action="${pageContext.request.contextPath}/Home">
@@ -89,8 +90,8 @@
 								<td>${parentStatus.count }</td>
 								<td>${map.day}</td>
 								<td>${map.division}</td>
-								<td>${ map.start_time}</td>
-								<td>${map.finish_time}</td>
+								<td>${ map.start_time_hhmm}</td>
+								<td>${map.finish_time_hhmm}</td>
 								<td>${map.break_time}</td>
 								<td>${map.standard_time }</td>
 								<td>${map.much_or_little }</td>
@@ -166,8 +167,8 @@
 								<td>${parentStatus.count }</td>
 								<td>${map.day}</td>
 								<td>${map.division}</td>
-								<td>${map.start_time}</td>
-								<td>${map.finish_time}</td>
+								<td>${map.start_time_hhmm}</td>
+								<td>${map.finish_time_hhmm}</td>
 								<td>${map.break_time}</td>
 								<td>${map.work_time }</td>
 								<td>${map.much_or_little }</td>
@@ -231,125 +232,114 @@
 		<input type="hidden" value="${ map }" class="finish_longitude">
 	</c:forEach>
 	<script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
-		async defer></script>
+		async defer>
+	</script>
 	<script>
-		const targetYear = getParam("target_year")
-		const targetMonth = getParam("target_month")
-		const count_days = days(targetYear, targetMonth)
-
-		const start_latitude_list = document
-				.getElementsByClassName('start_latitude');
-		const start_longitude_list = document
-				.getElementsByClassName('start_longitude');
-		const finish_latitude_list = document
-				.getElementsByClassName('finish_latitude');
-		const finish_longitude_list = document
-				.getElementsByClassName('finish_longitude');
-
-		var start_la_list = []
-		var start_lo_list = []
-		var finish_la_list = []
-		var finish_lo_list = []
-
-		var start_day_list = []
-		var finish_day_list = []
-
-		var markerData = [];
-
-		let count = 0
-		for (var i = 0; i < count_days; i++) {
-			const num = start_latitude_list[i].value
-			const num2 = start_longitude_list[i].value
-			if (num > 0) {
-				const obj = {
-					name : targetMonth + "/" + (i + 1) + " 出勤",
-					lat : parseFloat(num),
-					lng : parseFloat(num2),
-					icon : './images/red_point.png'
-				}
-				markerData.push(obj)
+	let map;
+	let marker = [];
+	let infoWindow = [];
+	const targetYear = getParam("target_year")
+	const targetMonth = getParam("target_month")
+	const count_days = days(targetYear, targetMonth)
+	const start_latitude_list = document
+			.getElementsByClassName('start_latitude');
+	const start_longitude_list = document
+			.getElementsByClassName('start_longitude');
+	const finish_latitude_list = document
+			.getElementsByClassName('finish_latitude');
+	const finish_longitude_list = document
+			.getElementsByClassName('finish_longitude');
+	var start_la_list = []
+	var start_lo_list = []
+	var finish_la_list = []
+	var finish_lo_list = []
+	var start_day_list = []
+	var finish_day_list = []
+	var markerData = [];
+	let count = 0
+	console.log(finish_latitude_list)
+	for (var i = 0; i < count_days; i++) {
+		const num = start_latitude_list[i].value
+		const num2 = start_longitude_list[i].value
+		if (num > 0) {
+			console.log(i + " " +num + " " + num2 )
+			const obj = {
+				name : targetMonth + "/" + (i + 1) + " 出勤",
+				lat : parseFloat(num),
+				lng : parseFloat(num2),
+				icon : './images/red_point.png'
 			}
-			const num3 = finish_latitude_list[i].value
-			const num4 = finish_longitude_list[i].value
-			if (num3 > 0) {
-				const obj = {
-					name : targetMonth + "/" + (i + 1) + " 退勤",
-					lat : parseFloat(num3),
-					lng : parseFloat(num4),
-					icon : './images/blue_point.png'
-				}
-				markerData.push(obj)
+			markerData.push(obj)
+		}
+		const num3 = finish_latitude_list[i].value
+		const num4 = finish_longitude_list[i].value
+		if (num3 > 0) {
+			console.log(i + " " +num3 + " " + num4 )
+			const obj = {
+				name : targetMonth + "/" + (i + 1) + " 退勤",
+				lat : parseFloat(num3),
+				lng : parseFloat(num4),
+				icon : './images/blue_point.png'
 			}
+			markerData.push(obj)
 		}
-
-		console.log(markerData)
-
-		function days(year, month) {
-			return new Date(parseInt(year, 10), parseInt(month, 10), 0)
-					.getDate();
-		}
-		//パラメーターで指定された値を取得するメソッド
-		function getParam(name, url) {
-			if (!url)
-				url = window.location.href;
-			name = name.replace(/[\[\]]/g, "\\$&");
-			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex
-					.exec(url)
-			if (!results)
-				return null
-			if (!results[2])
-				return ''
-			return decodeURIComponent(results[2].replace(/\+/g, " "))
-		}
-
-		var map;
-		var marker = [];
-		var infoWindow = [];
-
-		function initMap() {
-			// 地図の作成
-			var mapLatLng = new google.maps.LatLng({
-				lat : markerData[0]['lat'],
-				lng : markerData[0]['lng']
+	}
+	function days(year, month) {
+		return new Date(parseInt(year, 10), parseInt(month, 10), 0)
+				.getDate();
+	}
+	//パラメーターで指定された値を取得するメソッド
+	function getParam(name, url) {
+		if (!url)
+			url = window.location.href;
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex
+				.exec(url)
+		if (!results)
+			return null
+		if (!results[2])
+			return ''
+		return decodeURIComponent(results[2].replace(/\+/g, " "))
+	}
+	function initMap() {
+		// 地図の作成
+		var mapLatLng = new google.maps.LatLng({
+			lat : markerData[0]['lat'],
+			lng : markerData[0]['lng']
+		}); // 緯度経度のデータ作成
+		map = new google.maps.Map(document.getElementById('sample'), { // #sampleに地図を埋め込む
+			center : mapLatLng, // 地図の中心を指定
+			zoom : 15
+		// 地図のズームを指定
+		});
+		// マーカー毎の処理
+		for (var i = 0; i < markerData.length; i++) {
+			markerLatLng = new google.maps.LatLng({
+				lat : markerData[i]['lat'],
+				lng : markerData[i]['lng']
 			}); // 緯度経度のデータ作成
-			map = new google.maps.Map(document.getElementById('sample'), { // #sampleに地図を埋め込む
-				center : mapLatLng, // 地図の中心を指定
-				zoom : 15
-			// 地図のズームを指定
+			marker[i] = new google.maps.Marker({ // マーカーの追加
+				position : markerLatLng, // マーカーを立てる位置を指定
+				map : map,
+				icon : {
+					url : markerData[i]['icon']
+				// マーカーの画像を変更
+				}
+			// マーカーを立てる地図を指定
 			});
-
-			// マーカー毎の処理
-			for (var i = 0; i < markerData.length; i++) {
-				markerLatLng = new google.maps.LatLng({
-					lat : markerData[i]['lat'],
-					lng : markerData[i]['lng']
-				}); // 緯度経度のデータ作成
-				marker[i] = new google.maps.Marker({ // マーカーの追加
-					position : markerLatLng, // マーカーを立てる位置を指定
-					map : map,
-					icon : {
-						url : markerData[i]['icon']
-					// マーカーの画像を変更
-					}
-				// マーカーを立てる地図を指定
-				});
-
-				infoWindow[i] = new google.maps.InfoWindow({ // 吹き出しの追加
-					content : '<div class="sample">' + markerData[i]['name']
-							+ '</div>' // 吹き出しに表示する内容
-				});
-
-				markerEvent(i); // マーカーにクリックイベントを追加
-			}
-		}
-
-		// マーカーにクリックイベントを追加
-		function markerEvent(i) {
-			marker[i].addListener('click', function() { // マーカーをクリックしたとき
-				infoWindow[i].open(map, marker[i]); // 吹き出しの表示
+			infoWindow[i] = new google.maps.InfoWindow({ // 吹き出しの追加
+				content : '<div class="sample">' + markerData[i]['name']
+						+ '</div>' // 吹き出しに表示する内容
 			});
-
+			markerEvent(i); // マーカーにクリックイベントを追加
 		}
+	}
+	// マーカーにクリックイベントを追加
+	function markerEvent(i) {
+		marker[i].addListener('click', function() { // マーカーをクリックしたとき
+			infoWindow[i].open(map, marker[i]); // 吹き出しの表示
+		});
+	}
 		new Vue(
 				{
 					el : "#app",
@@ -357,7 +347,7 @@
 						selectedUser : null,
 						selectedYear : null,
 						selectedMonth : null,
-						visivle : false,
+						visible : false,
 					},
 					methods : {
 						nextYear : function() {

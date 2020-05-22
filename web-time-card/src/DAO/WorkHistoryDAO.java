@@ -124,14 +124,7 @@ public class WorkHistoryDAO extends DAO {
 
 		String sql = "UPDATE work_history SET finish_time = ?, feeling = ?,finish_latitude = ?,finish_longitude = ?,note = ? WHERE (emp_id = ?) and (date = ?);";
 
-		ProcessedTime pTime = new ProcessedTime(time.toString());
-		Calendar cal = new Calendar.Builder().setInstant(date).build();
 		Date safeDate = date; //自動計算で使うdateをエスケープしておく
-
-		if(pTime.getIndex() <= 16) {
-			cal.add(Calendar.DAY_OF_MONTH, -1);
-			date.setTime(cal.getTimeInMillis());
-		}
 
 		if(note == null) {
 			note = "";
@@ -180,6 +173,7 @@ public class WorkHistoryDAO extends DAO {
 				holiday = rs2.getString("holiday");
 			}
 
+			System.out.println(date + " " + start_time );
 			ProcessedTime pt_start = new ProcessedTime(start_time,"start");
 			ProcessedTime pt_finish = new ProcessedTime(finish_time);
 
@@ -224,7 +218,6 @@ public class WorkHistoryDAO extends DAO {
 	//出勤打刻がなしで、退勤打刻されている時の退勤打刻上書きメソッド
 	public void workFinish_update(String emp_id, Date date, Time time, String feeling, String user_type,
 			BigDecimal latitude, BigDecimal longitude) throws Exception {
-		System.out.println("updateが発生");
 
 		String sql = "UPDATE work_history SET finish_time = ?, feeling = ?,finish_latitude = ?,finish_longitude = ? WHERE (emp_id = ?) and (`date` = ?);";
 
@@ -1140,10 +1133,37 @@ public class WorkHistoryDAO extends DAO {
 	}
 
 	//打刻データを削除するメソッド
-	public void delete(Date date, String emp_id) throws Exception{
-		String sql = "DELETE FROM work_history WHERE (`emp_id` = ?) and (`date` = ?);";
+	public Boolean delete(Date date, String emp_id) throws Exception{
+
+		Boolean isPaidHoliday = false;
+
+		String sql1 = "SELECT  * FROM work_history WHERE (`emp_id` = ?) and (`date` = ?);";
+		try {
+			PreparedStatement statement = getPreparedStatement(sql1);
+
+			statement.setString(1, emp_id);
+			statement.setDate(2, date);
+
+			ResultSet rs =  statement.executeQuery();
+
+			String holiday = "";
+			while(rs.next()) {
+				holiday = rs.getString("holiday");
+			}
+			if(holiday.equals("2")) {
+				isPaidHoliday = true;
+			}
+
+		} catch (Exception e) {
+			System.out.println("エラー１");
+			e.printStackTrace();
+			super.rollback();
+			throw e;
+		}
+		String sql = "DELETE FROM work_history WHERE `emp_id` = ? AND `date` = ?;";
 
 		try {
+
 			PreparedStatement statement = getPreparedStatement(sql);
 
 			statement.setString(1, emp_id);
@@ -1154,12 +1174,16 @@ public class WorkHistoryDAO extends DAO {
 			super.commit();
 		} catch (Exception e) {
 			// TODO: handle exception
+			System.out.println("エラー");
+
 			e.printStackTrace();
 			super.rollback();
 			throw e;
 		}
-	}
 
+		return isPaidHoliday;
+	}
+	//退勤打刻がされているか調べるメソッド
 	public Time finishCheck(String emp_id, Date date) throws Exception{
 		// TODO 自動生成されたメソッド・スタブ
 		String sql = "SELECT * FROM work_history WHERE (`emp_id` = ?) and (`date` = ?);";

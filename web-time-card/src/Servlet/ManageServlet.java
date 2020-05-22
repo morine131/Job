@@ -148,6 +148,8 @@ public class ManageServlet extends HttpServlet {
 				ob.setDivision(wb.getDivision());
 				ob.setStart_time(wb.getStart_time());
 				ob.setFinish_time(wb.getFinish_time());
+				ob.setStart_time_hhmm(wb.getStart_time());
+				ob.setFinish_time_hhmm(wb.getFinish_time());
 				ob.setFeeling(wb.getFeeling());
 				ob.setHoliday(wb.getHoliday());
 				ob.setBreak_time(wb.getBreak_time());
@@ -181,25 +183,45 @@ public class ManageServlet extends HttpServlet {
 					int_holidays_over_time += p_holiday_over_time.getIndex();
 					int_holidays_late_over_time += p_holiday_late_over_time.getIndex();
 				}
-			}else if(wb.getStart_time() != null){
+			}else if(wb.getFinish_time() != null && wb.getStart_time() == null) {
 				ob.setDate(i+1);
 				ob.setDay(targetYear, targetMonth,i+1);
 				ob.setHoliday(targetYear,targetMonth,i+1);
+				ob.setFinish_time(wb.getFinish_time());
+				ob.setFinish_time_hhmm(wb.getFinish_time());
+				ob.setFeeling(wb.getFeeling());
+				start_latitude_list.add(new BigDecimal(0));
+				start_longitude_list.add(new BigDecimal(0));
+				finish_latitude_list.add(new BigDecimal(0));
+				finish_longitude_list.add(new BigDecimal(0));
+			}
+			else if(wb.getStart_time() != null){
+				ob.setDate(i+1);
+				ob.setDay(targetYear, targetMonth,i+1);
+				ob.setHoliday(wb.getHoliday());
 				ob.setStart_time(wb.getStart_time());
-
-				start_latitude_list.add(wb.getStart_latitude());
-				start_longitude_list.add(wb.getStart_longitude());
-				finish_latitude_list.add(wb.getFinish_latitude());
-				finish_longitude_list.add(wb.getFinish_longitude());
+				ob.setStart_time_hhmm(wb.getStart_time());
+				start_latitude_list.add(new BigDecimal(0));
+				start_longitude_list.add(new BigDecimal(0));
+				finish_latitude_list.add(new BigDecimal(0));
+				finish_longitude_list.add(new BigDecimal(0));
+			}else if(wb.getHoliday() != null) {
+				ob.setDate(i+1);
+				ob.setDay(targetYear, targetMonth,i+1);
+				ob.setHoliday(wb.getHoliday());
+				start_latitude_list.add(new BigDecimal(0));
+				start_longitude_list.add(new BigDecimal(0));
+				finish_latitude_list.add(new BigDecimal(0));
+				finish_longitude_list.add(new BigDecimal(0));
 			}else {
 				ob.setDate(i+1);
 				ob.setDay(targetYear, targetMonth,i+1);
 				ob.setHoliday(targetYear,targetMonth,i+1);
-
-				start_latitude_list.add(wb.getStart_latitude());
-				start_longitude_list.add(wb.getStart_longitude());
-				finish_latitude_list.add(wb.getFinish_latitude());
-				finish_longitude_list.add(wb.getFinish_longitude());
+				ob.setNotExist(1);
+				start_latitude_list.add(new BigDecimal(0));
+				start_longitude_list.add(new BigDecimal(0));
+				finish_latitude_list.add(new BigDecimal(0));
+				finish_longitude_list.add(new BigDecimal(0));
 			}
 			resultList.add(ob);
 			i++;
